@@ -108,33 +108,51 @@ class Graph:
                 return (self.get_path_with_power(src,dest,puis[0]),puis[0])
 
 
-
+#filename ="/Users/oktay/OneDrive/Bureau/ENSAE/S2/projet info/ensae-prog23-main/ensae-prog23-main/input/network.5.in"
 #file="/Users/adrien/Desktop/ENSAE/M1/Cours ENSAE S1/Info/projetS2/input/network.01.in"
-file="/Users/adrien/Desktop/ENSAE/M1/Cours ENSAE S1/Info/projetS2/input/routes.2.in"
+filename="/Users/adrien/Desktop/ENSAE/M1/Cours ENSAE S1/Info/projetS2/input/routes.2.in"
+
 def graph_from_file(file):
-    f=open(file)
-    graphique=Graph()
-    nb=f.readline().split()
-    if len(nb)==2:
-        for i in range(1,int(nb[1])+1):
-            val=f.readline().split()
-            if len(val)==3:
-                graphique.add_edge(int(val[0]),int(val[1]),int(val[2]))
-            elif len(val)==2:
-                graphique.add_edge(int(val[0]),int(val[1]))
-            elif len(val)==4:
-                graphique.add_edge(int(val[0]),int(val[1]),int(val[2]),int(val[3]))
-        return graphique
-    elif len(nb)==1:
-        for i in range(1,int(nb[0])+1):
-            val=f.readline().split()
-            if len(val)==3:
-                graphique.add_edge(int(val[0]),int(val[1]),int(val[2]))
-            elif len(val)==2:
-                graphique.add_edge(int(val[0]),int(val[1]))
-            elif len(val)==4:
-                graphique.add_edge(int(val[0]),int(val[1]),int(val[2]),int(val[3]))
-        return graphique
+    with open(filename, "r") as file:
+        n, m = map(int, file.readline().split())
+        g = Graph(range(1, n+1))
+        for _ in range(m):
+            edge = list(map(int, file.readline().split()))
+            if len(edge) == 3:
+                node1, node2, power_min = edge
+                g.add_edge(node1, node2, power_min) # will add dist=1 by default
+            elif len(edge) == 4:
+                node1, node2, power_min, dist = edge
+                g.add_edge(node1, node2, power_min, dist)
+            else:
+                raise Exception("Format incorrect")
+    return g
+
+
+#def graph_from_file(file):
+    #f=open(file)
+    #graphique=Graph()
+    #nb=f.readline().split()
+    #if len(nb)==2:
+        #for i in range(1,int(nb[1])+1):
+            #val=f.readline().split()
+            #if len(val)==3:
+                #graphique.add_edge(int(val[0]),int(val[1]),int(val[2]))
+            #elif len(val)==2:
+                #graphique.add_edge(int(val[0]),int(val[1]))
+            #elif len(val)==4:
+                #graphique.add_edge(int(val[0]),int(val[1]),int(val[2]),int(val[3]))
+        #return graphique
+    #elif len(nb)==1:
+        "for i in range(1,int(nb[0])+1):
+            #val=f.readline().split()
+            #if len(val)==3:
+                #graphique.add_edge(int(val[0]),int(val[1]),int(val[2]))
+            #elif len(val)==2:
+                #graphique.add_edge(int(val[0]),int(val[1]))
+            #elif len(val)==4:
+                #graphique.add_edge(int(val[0]),int(val[1]),int(val[2]),int(val[3]))
+        #return graphique
 
 
 def question_11():
