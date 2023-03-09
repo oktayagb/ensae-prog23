@@ -144,7 +144,7 @@ def graph_from_file(file):
                 #graphique.add_edge(int(val[0]),int(val[1]),int(val[2]),int(val[3]))
         #return graphique
     #elif len(nb)==1:
-        "for i in range(1,int(nb[0])+1):
+        #"for i in range(1,int(nb[0])+1):
             #val=f.readline().split()
             #if len(val)==3:
                 #graphique.add_edge(int(val[0]),int(val[1]),int(val[2]))
