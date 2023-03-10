@@ -175,6 +175,17 @@ def question_11():
     print(f' Temps total : {moyen:.2}ms')
     return
 
+import graphviz
+
+def draw_graph(graph):
+    dot = graphviz.Graph(format='png')
+    dot.attr(rankdir='LR')
+    for node in graph.nodes:
+        dot.node(str(node))
+        for neighbor in graph.graph[node]:
+            dot.edge(str(node), str(neighbor[0]), label=f"Power={neighbor[1]}, Dist={neighbor[2]}")
+    dot.render(view=True)
+    
 #A reprendre à partir de là
 class EnsembleDisjoint:
     parent={}
