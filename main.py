@@ -106,8 +106,35 @@ class Graph:
                 return (self.get_path_with_power(src,dest,puis[1]),puis[1],)
             elif len(puis)==1:
                 return (self.get_path_with_power(src,dest,puis[0]),puis[0])
+    def kruskal(self):
+        edges = []
+        for node in self.graph:
+            for neighbor in self.graph[node]:
+                edges.append((node, neighbor[0], neighbor[1]))
 
+        # Sort edges by increasing weight
+        edges.sort(key=lambda x: x[2])
 
+        # Initialize union-find structure
+        parents = {node: node for node in self.nodes}
+
+        def find(node):
+            if parents[node] != node:
+                parents[node] = find(parents[node])
+            return parents[node]
+
+        # Loop over edges and add them to the tree
+        tree = Graph()
+        for edge in edges:
+            parent1 = find(edge[0])
+            parent2 = find(edge[1])
+            if parent1 != parent2:
+                tree.add_edge(edge[0], edge[1], power_min=edge[2])
+                parents[parent1] = parent2
+
+        return tree          
+        
+        
 #filename ="/Users/oktay/OneDrive/Bureau/ENSAE/S2/projet info/ensae-prog23-main/ensae-prog23-main/input/network.5.in"
 #file="/Users/adrien/Desktop/ENSAE/M1/Cours ENSAE S1/Info/projetS2/input/network.01.in"
 filename="/Users/adrien/Desktop/ENSAE/M1/Cours ENSAE S1/Info/projetS2/input/routes.2.in"
