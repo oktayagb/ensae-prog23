@@ -33,7 +33,7 @@ class Graph:
 
 
 
-        def connected_components(self):
+    def connected_components(self):
             # On va réaliser un algorithme de parcours en largeur, qui est plus intéressant à utiliser qu'un algorithme de parcours en profondeur car nous n'allons pas avoir
 # de problème de maximum recursion
         visited = set()
