@@ -189,7 +189,7 @@ def graph_from_file(file):
                 raise Exception("Format incorrect")
     return g
 
-
+ 
 #def graph_from_file(file):
     #f=open(file)
     #graphique=Graph()
