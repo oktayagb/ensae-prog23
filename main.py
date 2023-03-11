@@ -34,20 +34,23 @@ class Graph:
 
 
         def connected_components(self):
-            visited = set()
+            # On va réaliser un algorithme de parcours en largeur, qui est plus intéressant à utiliser qu'un algorithme de parcours en profondeur car nous n'allons pas avoir
+# de problème de maximum recursion
+        visited = set()
         components = []
         for node in self.nodes:
             if node not in visited:
                 component = []
-                queue = deque([node])
+                queue = deque([node]) #nous utilisons les structures de piles afin de gérer les différents voisins
                 while queue:
                     current = queue.popleft()
-                    if current not in visited:
+                    if current not in visited: #si l'élément n'a pas été déjà visité, on le marqué comme visité et on rajoute ses voisins dans la pile
                         component.append(current)
                         visited.add(current)
                         queue.extend(neighbour[0] for neighbour in self.graph[current] if neighbour[0] not in visited)
                 components.append(component)
-        return components
+        return components #on renvoie les composantes connexes du graphe
+# Complexité en 0(nb_edges + nb_nodes)
         
         
         
@@ -73,18 +76,19 @@ class Graph:
 
 
     def get_path_with_power(self,src,dest,power):
-        queue = deque([(src, [src])])
+        #De la même manière que précédemment, nous allons avoir recourt à un algorithme de parcours en largeur afin de résoudre notre problème, de type Djikstra.
+        queue = deque([(src, [src])]) #on met en place une pile afin de gérer les noeuds. L'intérêt de la pile est que l'on garde l'odre d'arrivée
         visited = set([src])
         while queue:
             node, path = queue.popleft()
             if node == dest:
-                return path
-            for neighbor, neighbor_power, dist in self.graph[node]:
-                if neighbor not in visited and neighbor_power <= power:
-                    visited.add(neighbor)
-                    queue.append((neighbor, path + [neighbor]))
-        return None
-    
+                return path #dès que nous sommes arrivés à destination, nous renvoyons le parcours qui nous a permis
+            for neighbor, neighbor_power, dist in self.graph[node]: #on regarde chaque voisin du point
+                if neighbor not in visited and neighbor_power <= power: #on vérifie que le voisin a une puissance <= à notre puissance pour continuer sur cette branche
+                    visited.add(neighbor) #on le marque comme visité
+                    queue.append((neighbor, path + [neighbor])) #on rajoute à la pile ce noeud et on actualise le parcours en rajoutant le noeud
+        return None #on renvoie None seulement si après avoir tout parcouru on ne trouve pas de chemin de puissance minimal, ou que les éléments sont dans 2 compo connexes
+#La complexité est en O(nb_edges)
     
     #def get_path_with_power(self, src, dest, power):
      #   def recursive(graph, node, chemin, visited=[]):
@@ -101,11 +105,12 @@ class Graph:
         #return recursive(self.graph, src,[src])
 
 
+    #Nous allons utiliser notre fonction get_path_with_power avec une recherche par dichotomie afin de trouver la puissance minimale.
     def min_power(self, src, dest):
         test=False
         for compo in self.connected_components_set():
             if src  in list(compo) and dest in list(compo):
-                test=True
+                test=True #on vérifie tout d'abord que les deux éléments sont dans la même composante connexe
         if test==False:
             return None
         elif test==True:
@@ -113,7 +118,7 @@ class Graph:
             for noeud in self.graph:
                 for traj in self.graph[noeud]:
                     puis.append(traj[1])
-            puis.sort()
+            puis.sort() #on récupère la liste des puissances de tous les trajets, que l'on trie par ordre croissant
             while len(puis)>2:
                 if len(puis)%2==0:
                     mid=(len(puis)//2)
@@ -134,38 +139,34 @@ class Graph:
                     else:
                         mid = (len(puis) // 2) + 1
                     power_min = puis[mid-1]
-            if len(puis)>=2:
+            if len(puis)>=2: #on réalise la dichotomie en fonction de si la puissance donnée permet de réaliser le chemin.
                 return (self.get_path_with_power(src,dest,puis[1]),puis[1],)
             elif len(puis)==1:
                 return (self.get_path_with_power(src,dest,puis[0]),puis[0])
+#La complexité est de 0((nb_nodes+nb_egdes)*ln(nb_edges))
             
+    
+# Nous allons implémenter l'algorithme de Kruskal
     def kruskal(self):
         edges = []
         for node in self.graph:
             for neighbor in self.graph[node]:
                 edges.append((node, neighbor[0], neighbor[1]))
-
-        # Sort edges by increasing weight
-        edges.sort(key=lambda x: x[2])
-
-        # Initialize union-find structure
-        parents = {node: node for node in self.nodes}
-
+        edges.sort(key=lambda x: x[2]) #on trie les chemins par ordre croissant de puissance
+        parents = {node: node for node in self.nodes} #on initialise les parents de chaque noeud.
         def find(node):
             if parents[node] != node:
                 parents[node] = find(parents[node])
-            return parents[node]
-
-        # Loop over edges and add them to the tree
-        tree = Graph()
+            return parents[node] #la fonction find est une fonction récursive qui permet de renvoyer le parent d'un noeud
+        tree = Graph() #on crée l'arbre que l'on va renvoyer.
         for edge in edges:
             parent1 = find(edge[0])
-            parent2 = find(edge[1])
+            parent2 = find(edge[1]) #pour chaque chemin, on détermine le parent du départ et de l'arrivée
             if parent1 != parent2:
                 tree.add_edge(edge[0], edge[1], power_min=edge[2])
-                parents[parent1] = parent2
-
-        return tree          
+                parents[parent1] = parent2 #si les parents sont différents, on peut ajouter ce chemin à notre arbre, s'assurant donc bien qu'il n'y aura pas de
+                # boucles dans notre nouvel arbre
+        return tree      
         
         
 #filename ="/Users/oktay/OneDrive/Bureau/ENSAE/S2/projet info/ensae-prog23-main/ensae-prog23-main/input/network.5.in"
@@ -215,12 +216,14 @@ def graph_from_file(file):
         #return graphique
 
 
-def question_11():
-    g=graph_from_file(file)
-
+filename1="/Users/adrien/Desktop/ENSAE/M1/Cours ENSAE S1/Info/projetS2/input/routes.1.in"
+filename2="/Users/adrien/Desktop/ENSAE/M1/Cours ENSAE S1/Info/projetS2/input/routes.2.in"
+filename3="/Users/adrien/Desktop/ENSAE/M1/Cours ENSAE S1/Info/projetS2/input/routes.3.in"
+file=[filename1,filename2,filename3]
+def question_10(g): # on cherche à estimer grossièrement le temps de calcul de plusieurs graphes. L'on remarque que ce temps est considérable.
     #Nombre de trajets possibles = nb_nodes**2
     start = time.time()
-    N=1
+    N=5
     for i in range(N):
         dep=random.randint(1,g.nb_nodes)
         fin=random.randint(1,g.nb_nodes)
@@ -232,7 +235,7 @@ def question_11():
     total = moyen * (g.nb_nodes**2)
 
     print(f'Temps d\'exécution : {elapsed:.2}ms')
-    print(f' Temps total : {moyen:.2}ms')
+    print(f' Temps total : {total:.2}ms')
     return
 
 import graphviz
