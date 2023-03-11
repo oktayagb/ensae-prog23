@@ -33,20 +33,38 @@ class Graph:
 
 
 
-    def connected_components(self):
-        val=[]
+        def connected_components(self):
+            visited = set()
+        components = []
         for node in self.nodes:
-            def recursive(graph, node, visited=None):
-                if visited == None:
-                    visited = []
-                if node not in visited:
-                    visited.append(node)
-                unvisited = [k[0] for k in graph[node] if k[0] not in visited]
-                for node in unvisited:
-                    recursive(graph, node, visited)
-                return visited
-            val.append(recursive(self.graph,node))
-        return val
+            if node not in visited:
+                component = []
+                queue = deque([node])
+                while queue:
+                    current = queue.popleft()
+                    if current not in visited:
+                        component.append(current)
+                        visited.add(current)
+                        queue.extend(neighbour[0] for neighbour in self.graph[current] if neighbour[0] not in visited)
+                components.append(component)
+        return components
+        
+        
+        
+   # def connected_components(self):
+       # val=[]
+    #    for node in self.nodes:
+     #       def recursive(graph, node, visited=None):
+      #          if visited == None:
+       #             visited = []
+        #        if node not in visited:
+         #           visited.append(node)
+          #      unvisited = [k[0] for k in graph[node] if k[0] not in visited]
+           #     for node in unvisited:
+            #        recursive(graph, node, visited)
+             #   return visited
+            #val.append(recursive(self.graph,node))
+        #return val
 
 
 
@@ -54,19 +72,33 @@ class Graph:
         return set(map(frozenset, self.connected_components()))
 
 
-    def get_path_with_power(self, src, dest, power):
-        def recursive(graph, node, chemin, visited=[]):
-            if node==dest:
-                return chemin
-            if node not in visited:
-                visited.append(node)
-                unvisited = [k[0] for k in graph[node] if k[0] not in visited and k[1]<=power]
-                for node in unvisited:
-                    result=recursive(graph,node,chemin+[node],visited)
-                    if result is not None:
-                        return result
-            return None
-        return recursive(self.graph, src,[src])
+    def get_path_with_power(self,src,dest,power):
+        queue = deque([(src, [src])])
+        visited = set([src])
+        while queue:
+            node, path = queue.popleft()
+            if node == dest:
+                return path
+            for neighbor, neighbor_power, dist in self.graph[node]:
+                if neighbor not in visited and neighbor_power <= power:
+                    visited.add(neighbor)
+                    queue.append((neighbor, path + [neighbor]))
+        return None
+    
+    
+    #def get_path_with_power(self, src, dest, power):
+     #   def recursive(graph, node, chemin, visited=[]):
+      #      if node==dest:
+       #        return chemin
+        #    if node not in visited:
+         #       visited.append(node)
+          #      unvisited = [k[0] for k in graph[node] if k[0] not in visited and k[1]<=power]
+           #     for node in unvisited:
+            #        result=recursive(graph,node,chemin+[node],visited)
+             #       if result is not None:
+           #             return result
+           # return None
+        #return recursive(self.graph, src,[src])
 
 
     def min_power(self, src, dest):
@@ -106,6 +138,7 @@ class Graph:
                 return (self.get_path_with_power(src,dest,puis[1]),puis[1],)
             elif len(puis)==1:
                 return (self.get_path_with_power(src,dest,puis[0]),puis[0])
+            
     def kruskal(self):
         edges = []
         for node in self.graph:
@@ -212,61 +245,6 @@ def draw_graph(graph):
         for neighbor in graph.graph[node]:
             dot.edge(str(node), str(neighbor[0]), label=f"Power={neighbor[1]}, Dist={neighbor[2]}")
     dot.render(view=True)
-    
-#A reprendre à partir de là
-class EnsembleDisjoint:
-    parent={}
-    def __init__(self,N):
-        for i in range(1,N+1):
-            self.parent[i]=i
-
-    def get_parent(self,k):
-        if self.parent[k]==k:
-            return k
-        return self.get_parent(self.parent[k])
-
-    def Union(self,a,b):
-        x = self.get_parent(a)
-        y = self.get_parent(b)
-
-        self.parent[x] = y
-
-def Krustal(arcs, nb_sommets):
-    Arbre_minimal=[]
-    ed = EnsembleDisjoint(nb_sommets)
-    index=0
-
-    while len(Arbre_minimal)!=nb_sommets-1:
-        src,dest,weight=arcs[index]
-        index += 1
-
-        x = ed.get_parent(src)
-        y = ed.get_parent(dest)
-
-        if x!=y:
-            Arbre_minimal.append((src,dest,weight))
-            ed.Union(x, y)
-
-    return Arbre_minimal
-
-g=graph_from_file(file)
-graph=g.graph
-
-arcs=[]
-for dep in graph:
-    for dest in graph[dep]:
-        arr,puissance =dest[0],dest[1]
-        arcs.append((dep,arr,puissance))
-
-arcs.sort(key=lambda x:x[2])
-nb_sommets=g.nb_nodes
-
-a=Krustal(arcs,nb_sommets)
-
-g_min=Graph()
-for val in a :
-    g_min.add_edge(val[0],val[1],val[2])
-print(g_min)
 
 
 
