@@ -1,5 +1,5 @@
 import sys
-sys.path.append("ensae-prog23-main/")###peut etre qu'il faudra changer ici mais sur mon ordi ca marche
+sys.path.append("ensae-prog23-main/")
 
 import unittest
 from main import Graph, graph_from_file
