@@ -173,7 +173,7 @@ class Graph:
 #file="/Users/adrien/Desktop/ENSAE/M1/Cours ENSAE S1/Info/projetS2/input/network.01.in"
 filename="/Users/adrien/Desktop/ENSAE/M1/Cours ENSAE S1/Info/projetS2/input/routes.2.in"
 
-def graph_from_file(file):
+def graph_from_file(filename):
     with open(filename, "r") as file:
         n, m = map(int, file.readline().split())
         g = Graph(range(1, n+1))
