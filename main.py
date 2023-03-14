@@ -209,30 +209,8 @@ def graph_from_file(filename):
     return g
 
  
-#def graph_from_file(file):
-    #f=open(file)
-    #graphique=Graph()
-    #nb=f.readline().split()
-    #if len(nb)==2:
-        #for i in range(1,int(nb[1])+1):
-            #val=f.readline().split()
-            #if len(val)==3:
-                #graphique.add_edge(int(val[0]),int(val[1]),int(val[2]))
-            #elif len(val)==2:
-                #graphique.add_edge(int(val[0]),int(val[1]))
-            #elif len(val)==4:
-                #graphique.add_edge(int(val[0]),int(val[1]),int(val[2]),int(val[3]))
-        #return graphique
-    #elif len(nb)==1:
-        #"for i in range(1,int(nb[0])+1):
-            #val=f.readline().split()
-            #if len(val)==3:
-                #graphique.add_edge(int(val[0]),int(val[1]),int(val[2]))
-            #elif len(val)==2:
-                #graphique.add_edge(int(val[0]),int(val[1]))
-            #elif len(val)==4:
-                #graphique.add_edge(int(val[0]),int(val[1]),int(val[2]),int(val[3]))
-        #return graphique
+
+    
 
 
 filename1="/Users/adrien/Desktop/ENSAE/M1/Cours ENSAE S1/Info/projetS2/input/routes.1.in"
