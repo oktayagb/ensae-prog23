@@ -206,23 +206,45 @@ filename1="/Users/adrien/Desktop/ENSAE/M1/Cours ENSAE S1/Info/projetS2/input/rou
 filename2="/Users/adrien/Desktop/ENSAE/M1/Cours ENSAE S1/Info/projetS2/input/routes.2.in"
 filename3="/Users/adrien/Desktop/ENSAE/M1/Cours ENSAE S1/Info/projetS2/input/routes.3.in"
 file=[filename1,filename2,filename3]
-def question_10(g): # on cherche à estimer grossièrement le temps de calcul de plusieurs graphes. L'on remarque que ce temps est considérable.
-    #Nombre de trajets possibles = nb_nodes**2
-    start = time.time()
-    N=5
-    for i in range(N):
-        dep=random.randint(1,g.nb_nodes)
-        fin=random.randint(1,g.nb_nodes)
-        g.min_power(dep,fin)
 
-    end = time.time()
-    elapsed = end - start
-    moyen = elapsed / N
-    total = moyen * (g.nb_nodes**2)
 
-    print(f'Temps d\'exécution : {elapsed:.2}ms')
-    print(f' Temps total : {total:.2}ms')
-    return
+def question_10(route, network,N):  # on cherche à estimer grossièrement le temps de calcul de plusieurs graphes. L'on remarque que ce temps est considérable.
+    g = graph_from_file(network)
+    with open(route, "r") as file:
+        n = int(file.readline().split()[0])
+        start = time.time()
+        for i in range(N):
+            edge = list(map(int, file.readline().split()))
+            dep, arr, utilite = edge
+            g.min_power(dep, arr)  # on calcule la puissance minimale pour chaque trajet de routes.x.in
+        end = time.time()
+        elapsed = end - start
+        total = (elapsed / N) * n
+        return f' Temps total : {total:.5}s'  # on renvoie le temps total
+
+
+# Nous trouvons pour de l'ordre de 10^6s pour les network.x.in, avec x>1.
+
+
+# Question 15
+
+def question_15(route, network, out):  # on cherche à estimer le temps de calcul de plusieurs graphes après transformations par Kruskal
+    g = graph_from_file(network)
+    s = g.kruskal()  # on réalise la transformation de Kruskal
+    with open(route, "r") as file:
+        n = int(file.readline().split()[0])
+        start = time.time()
+        fichier = open(out, "a")  # on va stocker les valeurs dans un nouveau dossier route.x.out
+        for i in range(n):
+            edge = list(map(int, file.readline().split()))
+            dep, arr, utilite = edge
+            a = s.min_power_tree(dep, arr)  # on calcule la puissance minimale pour chaque trajet de routes.x.in
+            fichier.write(str(a))
+            fichier.write("\n")
+        end = time.time()
+        total = end - start
+        fichier.close()
+        return f' Temps total : {total:.5}s'  # on renvoie le temps total
 
 import graphviz
 
