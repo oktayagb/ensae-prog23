@@ -52,23 +52,7 @@ class Graph:
         return components #on renvoie les composantes connexes du graphe
 # Complexité en 0(nb_edges + nb_nodes)
         
-        
-        
-   # def connected_components(self):
-       # val=[]
-    #    for node in self.nodes:
-     #       def recursive(graph, node, visited=None):
-      #          if visited == None:
-       #             visited = []
-        #        if node not in visited:
-         #           visited.append(node)
-          #      unvisited = [k[0] for k in graph[node] if k[0] not in visited]
-           #     for node in unvisited:
-            #        recursive(graph, node, visited)
-             #   return visited
-            #val.append(recursive(self.graph,node))
-        #return val
-
+ 
 
 
     def connected_components_set(self):
@@ -217,33 +201,6 @@ def graph_from_file(filename):
             else:
                 raise Exception("Format incorrect")
     return g
-
- 
-#def graph_from_file(file):
-    #f=open(file)
-    #graphique=Graph()
-    #nb=f.readline().split()
-    #if len(nb)==2:
-        #for i in range(1,int(nb[1])+1):
-            #val=f.readline().split()
-            #if len(val)==3:
-                #graphique.add_edge(int(val[0]),int(val[1]),int(val[2]))
-            #elif len(val)==2:
-                #graphique.add_edge(int(val[0]),int(val[1]))
-            #elif len(val)==4:
-                #graphique.add_edge(int(val[0]),int(val[1]),int(val[2]),int(val[3]))
-        #return graphique
-    #elif len(nb)==1:
-        #"for i in range(1,int(nb[0])+1):
-            #val=f.readline().split()
-            #if len(val)==3:
-                #graphique.add_edge(int(val[0]),int(val[1]),int(val[2]))
-            #elif len(val)==2:
-                #graphique.add_edge(int(val[0]),int(val[1]))
-            #elif len(val)==4:
-                #graphique.add_edge(int(val[0]),int(val[1]),int(val[2]),int(val[3]))
-        #return graphique
-
 
 filename1="/Users/adrien/Desktop/ENSAE/M1/Cours ENSAE S1/Info/projetS2/input/routes.1.in"
 filename2="/Users/adrien/Desktop/ENSAE/M1/Cours ENSAE S1/Info/projetS2/input/routes.2.in"
