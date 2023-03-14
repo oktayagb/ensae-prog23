@@ -167,25 +167,35 @@ class Graph:
     
 # Nous allons implémenter l'algorithme de Kruskal
     def kruskal(self):
-        edges = []
-        for node in self.graph:
-            for neighbor in self.graph[node]:
-                edges.append((node, neighbor[0], neighbor[1]))
-        edges.sort(key=lambda x: x[2]) #on trie les chemins par ordre croissant de puissance
-        parents = {node: node for node in self.nodes} #on initialise les parents de chaque noeud.
+        edges = self.edges
+        edges.sort(key=lambda x: x[2])  # on trie les chemins par ordre croissant de puissance
+        parents = {node: node for node in self.nodes}  # on initialise les parents de chaque noeud.
+        rang = {node: 0 for node in self.nodes}
         def find(node):
             if parents[node] != node:
                 parents[node] = find(parents[node])
-            return parents[node] #la fonction find est une fonction récursive qui permet de renvoyer le parent d'un noeud
-        tree = Graph() #on crée l'arbre que l'on va renvoyer.
-        for edge in edges:
-            parent1 = find(edge[0])
-            parent2 = find(edge[1]) #pour chaque chemin, on détermine le parent du départ et de l'arrivée
-            if parent1 != parent2:
-                tree.add_edge(edge[0], edge[1], power_min=edge[2])
-                parents[parent1] = parent2 #si les parents sont différents, on peut ajouter ce chemin à notre arbre, s'assurant donc bien qu'il n'y aura pas de
-                # boucles dans notre nouvel arbre
-        return tree      
+            return parents[
+                node]  # la fonction find est une fonction récursive qui permet de renvoyer le parent d'un noeud
+        def union(x, y):
+            x_racine = find(x)
+            y_racine = find(y)
+            if x_racine != y_racine:
+                if rang[x_racine] < rang[y_racine]:
+                    parents[x_racine] = y_racine
+                else:
+                    parents[y_racine] = x_racine
+                    if rang[x_racine] == rang[y_racine]:
+                        rang[x_racine] = rang[x_racine] + 1
+        index = 0
+        tree = Graph(self.nodes)  # on crée l'arbre que l'on va renvoyer.
+        # tree = Graph([n for n in range(1,self.nb_nodes+1)])
+        while tree.nb_edges != self.nb_nodes - 1:
+            src, dest, power = edges[index]
+            index += 1
+            if find(src) != find(dest):
+                tree.add_edge(src, dest, power)
+                union(src, dest)
+        return tree   
         
         
 #filename ="/Users/oktay/OneDrive/Bureau/ENSAE/S2/projet info/ensae-prog23-main/ensae-prog23-main/input/network.5.in"
@@ -209,8 +219,30 @@ def graph_from_file(filename):
     return g
 
  
-
-    
+#def graph_from_file(file):
+    #f=open(file)
+    #graphique=Graph()
+    #nb=f.readline().split()
+    #if len(nb)==2:
+        #for i in range(1,int(nb[1])+1):
+            #val=f.readline().split()
+            #if len(val)==3:
+                #graphique.add_edge(int(val[0]),int(val[1]),int(val[2]))
+            #elif len(val)==2:
+                #graphique.add_edge(int(val[0]),int(val[1]))
+            #elif len(val)==4:
+                #graphique.add_edge(int(val[0]),int(val[1]),int(val[2]),int(val[3]))
+        #return graphique
+    #elif len(nb)==1:
+        #"for i in range(1,int(nb[0])+1):
+            #val=f.readline().split()
+            #if len(val)==3:
+                #graphique.add_edge(int(val[0]),int(val[1]),int(val[2]))
+            #elif len(val)==2:
+                #graphique.add_edge(int(val[0]),int(val[1]))
+            #elif len(val)==4:
+                #graphique.add_edge(int(val[0]),int(val[1]),int(val[2]),int(val[3]))
+        #return graphique
 
 
 filename1="/Users/adrien/Desktop/ENSAE/M1/Cours ENSAE S1/Info/projetS2/input/routes.1.in"
