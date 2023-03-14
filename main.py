@@ -144,6 +144,25 @@ class Graph:
             elif len(puis)==1:
                 return (self.get_path_with_power(src,dest,puis[0]),puis[0])
 #La complexité est de 0((nb_nodes+nb_egdes)*ln(nb_edges))
+
+    def min_power_chemin(self, chemin):#minimum de puissance nécessaire pour pouvoir faire un trajet donnée
+        puissance = 0
+        for i in range(len(chemin)-1):
+            voisins = self.graph[chemin[i]]
+            for voisin in voisins:
+                if voisin[0] == chemin[i+1]:
+                    if voisin[1] > puissance:
+                        puissance = voisin[1]
+                    break # on sort de la boucle sur les voisins dès qu'on a trouvé le bon voisin
+        return puissance
+
+
+    #Pour les network.x.in on a qu'une seule composante connexe donc pas besoin d'utiliser les composantes connexes.
+    #Comme le chemin est unique, on en determine un peu importe sa puissance et on determine le minimum de puissance nécessaire pour faire ce trajet
+    def min_power_tree(self, src, dest):
+        chemin=self.get_path_with_power(src,dest,np.inf)
+        return chemin, self.min_power_chemin(chemin)
+
             
     
 # Nous allons implémenter l'algorithme de Kruskal
