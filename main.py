@@ -288,7 +288,7 @@ def question_10(route, network,N):  # on cherche à estimer grossièrement le te
         for i in range(N):
             edge = list(map(int, file.readline().split()))
             dep, arr, utilite = edge
-            g.min_power(dep, arr,pre_process)  # on calcule la puissance minimale pour chaque trajet de routes.x.in
+            g.min_power(dep, arr)  # on calcule la puissance minimale pour chaque trajet de routes.x.in
         end = time.time()
         elapsed = end - start
         total = (elapsed / N) * n
