@@ -139,7 +139,7 @@ class Graph:
         profondeur, fathers = pre_process[1],pre_process[2]
         src_ligne=profondeur[src]
         dest_ligne=profondeur[dest]
-        if src_ligne <= dest_ligne: #on récupère la profondeur des deux noeuds dans l'arbre, et on remonte dans l'arbre jusqu'à trouver le premier 
+        if src_ligne < dest_ligne: #on récupère la profondeur des deux noeuds dans l'arbre, et on remonte dans l'arbre jusqu'à trouver le premier 
             # ancêtre commun aux deux noeuds. De plus, on garde en tête le chemin parcouru par chacun des noeuds.
             while src_ligne < dest_ligne:
                 dest=fathers[dest]
@@ -154,11 +154,23 @@ class Graph:
                 src_chemin.append(src)
             src_chemin.pop()
             return src_chemin + dest_chemin[::-1] # on concatène les deux chemins, afin d'avoir, de manière optimale, le (seul) chemin reliant nos deux noeuds.
-        elif src_ligne >= dest_ligne:
+        elif src_ligne > dest_ligne:
             while src_ligne > dest_ligne:
                 src = fathers[src]
                 src_ligne = profondeur[src]
                 src_chemin.append(src)
+            while fathers[dest] != fathers[src]:
+                dest = fathers[dest]
+                dest_ligne = profondeur[dest]
+                dest_chemin.append(dest)
+                src = fathers[src]
+                src_ligne = profondeur[src]
+                src_chemin.append(src)
+            src_chemin.pop()
+            return src_chemin + dest_chemin[::-1]
+        else:
+            if fathers[dest]==fathers[src]:
+                return [src,fathers[src], dest]
             while fathers[dest] != fathers[src]:
                 dest = fathers[dest]
                 dest_ligne = profondeur[dest]
@@ -323,9 +335,9 @@ def dfs(graph, start, profondeur,fathers,visited=None,index=0): #nous réalisons
     if visited is None:
         visited = set()  # ensemble de sommets visités
     visited.add(start)  # marquer le sommet comme visité
+    index+=1
     for neighbor in graph[start]:
             if neighbor[0] not in visited:  # parcourir les voisins non visités
-                index+=1
                 profondeur[neighbor[0]] += index #on augmente la profondeur à chaque fois que l'on descend dans le graphe
                 fathers[neighbor[0]] = start #on récupère le père de chaque noeud
                 dfs(graph, neighbor[0], profondeur,fathers,visited,index)  # appel récursif pour visiter chaque voisin non visité
