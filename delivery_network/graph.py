@@ -358,3 +358,24 @@ profondeur, fathers = dfs(s.graph,root,prof,dads)
 pre_process=(root,profondeur,fathers,prof,dads)
 #Lorsque vous souhaitez utiliser une fonction qui nécessite le pré-process, il ne faut pas oublier de donner la même valeur du network dans cette
 # fonction et à la ligne 337.
+##########################################################################################################################
+# Soit G un graphe non-pondéré et non-dirigé, et soit A un arbre couvrant de poids minimal de G.
+# 
+# 
+# Supposons que le trajet t dans G relie les sommets u et v. Si t est contenu dans A, alors le trajet t dans A relie également les sommets u et v.
+# 
+# 
+# Supposons maintenant que t contient une arête qui n'est pas dans A. Nous allons montrer que cela ne peut pas arriver en utilisant l'hypothèse que A est un arbre couvrant de poids minimal.
+# 
+# 
+# Soit e une arête de t qui n'est pas dans A. Comme A est un arbre couvrant, il y a un unique chemin dans A reliant u et v. Supposons que ce chemin soit u -> w -> v, où w est un sommet intermédiaire sur le chemin.
+# 
+# 
+# Nous pouvons maintenant remplacer l'arête e dans t par le chemin u -> w -> v dans A. Le résultat est un nouveau trajet t' qui relie u et v et qui est contenu dans A. De plus, le poids total de t' dans A est inférieur ou égal au poids total de t dans G, car A est un arbre couvrant de poids minimal.
+# 
+# 
+# Par conséquent, pour couvrir le trajet t dans G, nous pouvons simplement utiliser la même puissance que celle requise pour couvrir le trajet t' dans A. Comme t' est un sous-chemin de A, la puissance minimale requise pour couvrir t' dans A est la même que celle requise pour couvrir t dans A. Ainsi, la puissance minimale requise pour couvrir t dans G est la même que celle requise pour couvrir t dans A.
+# 
+# 
+# En conclusion, si le trajet t est entièrement contenu dans l'arbre couvrant de poids minimal A, alors la puissance minimale requise pour couvrir le trajet t dans le graphe G est égale à la puissance minimale requise pour couvrir le même trajet t dans l'arbre couvrant de poids minimal A.​
+
