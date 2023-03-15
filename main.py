@@ -4,6 +4,7 @@ import heapq
 import random
 import time
 from collections import deque
+import graphviz
 
 
 class Graph:
@@ -260,6 +261,13 @@ out8 = "/Users/adrien/Desktop/ENSAE/M1/Cours ENSAE S1/Info/projetS2/input/routes
 out9 = "/Users/adrien/Desktop/ENSAE/M1/Cours ENSAE S1/Info/projetS2/input/routes.9.out"
 out10 = "/Users/adrien/Desktop/ENSAE/M1/Cours ENSAE S1/Info/projetS2/input/routes.10.out"
 
+def draw_graph(graphe,chemin):
+    dot = graphviz.Graph()
+    for u, v,w in graphe.edges:
+        dot.edge(str(u), str(v))
+    for u, v in zip(chemin, chemin[1:]):
+        dot.edge(str(u), str(v), color='red')
+    return dot.render( format='png')
 
 def question_10(route, network,N):  # on cherche à estimer grossièrement le temps de calcul de plusieurs graphes. L'on remarque que ce temps est considérable.
     s = graph_from_file(network)
