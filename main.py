@@ -131,36 +131,6 @@ class Graph:
 # La complexité est de 0((nb_nodes+nb_egdes)*ln(nb_edges))
 
 
-    def kruskal(self):
-        edges = self.edges
-        edges.sort(key=lambda x: x[2])  # on trie les chemins par ordre croissant de puissance
-        parents = {node: node for node in self.nodes}  # on initialise les parents de chaque noeud.
-        rang = {node: 0 for node in self.nodes} #on itinialise le rang de chaque noeud
-        def find(node):
-            if parents[node] != node:
-                parents[node] = find(parents[node])
-            return parents[node]  # la fonction find est une fonction récursive qui permet de renvoyer le parent d'un noeud
-        def union(x, y):
-            x_racine = find(x)
-            y_racine = find(y)
-            if x_racine != y_racine:
-                if rang[x_racine] < rang[y_racine]:
-                    parents[x_racine] = y_racine
-                else:
-                    parents[y_racine] = x_racine
-                    if rang[x_racine] == rang[y_racine]:
-                        rang[x_racine] = rang[x_racine] + 1 #la fonction union permet de lier les noeuds entre eux, l'utilisation de 'racine' 
-                        # nous permet de gagner en efficacité
-        index = 0
-        tree = Graph(self.nodes)  # on crée l'arbre que l'on va renvoyer.
-        while tree.nb_edges != self.nb_nodes - 1:
-            src, dest, power = edges[index]
-            index += 1
-            if find(src) != find(dest):
-                tree.add_edge(src, dest, power)
-                union(src, dest)
-        return tree #on rajoute les arêtes si elles n'ont pas le même parent. Dans ce cas on les relie dans la structure union.
-
 
     def find_path(self, src, dest,pre_process): #on réalise cette fonction afin d'optimiser le temps de recherche d'un chemin dans un arbre connexe.
         root=pre_process[0] #on appelle notre pré-processing 
@@ -234,6 +204,38 @@ def graph_from_file(filename):
     return g
 
 
+ def kruskal(graph):
+        edges = graph.edges
+        edges.sort(key=lambda x: x[2])  # on trie les chemins par ordre croissant de puissance
+        parents = {node: node for node in graph.nodes}  # on initialise les parents de chaque noeud.
+        rang = {node: 0 for node in graph.nodes} #on itinialise le rang de chaque noeud
+        def find(node):
+            if parents[node] != node:
+                parents[node] = find(parents[node])
+            return parents[node]  # la fonction find est une fonction récursive qui permet de renvoyer le parent d'un noeud
+        def union(x, y):
+            x_racine = find(x)
+            y_racine = find(y)
+            if x_racine != y_racine:
+                if rang[x_racine] < rang[y_racine]:
+                    parents[x_racine] = y_racine
+                else:
+                    parents[y_racine] = x_racine
+                    if rang[x_racine] == rang[y_racine]:
+                        rang[x_racine] = rang[x_racine] + 1 #la fonction union permet de lier les noeuds entre eux, l'utilisation de 'racine' 
+                        # nous permet de gagner en efficacité
+        index = 0
+        tree = Graph(graph.nodes)  # on crée l'arbre que l'on va renvoyer.
+        while tree.nb_edges != graph.nb_nodes - 1:
+            src, dest, power = edges[index]
+            index += 1
+            if find(src) != find(dest):
+                tree.add_edge(src, dest, power)
+                union(src, dest)
+        return tree #on rajoute les arêtes si elles n'ont pas le même parent. Dans ce cas on les relie dans la structure union.
+
+
+
 #liste des network, des routes.in et routes.out
 network1 = "/Users/adrien/Desktop/ENSAE/M1/Cours ENSAE S1/Info/projetS2/input/network.1.in"
 network2 = "/Users/adrien/Desktop/ENSAE/M1/Cours ENSAE S1/Info/projetS2/input/network.2.in"
@@ -298,7 +300,7 @@ def question_10(route, network,N):  # on cherche à estimer grossièrement le te
 
 def question_15(route, network, out):  # on cherche à estimer le temps de calcul de plusieurs graphes après transformations par Kruskal
     g = graph_from_file(network)
-    s = g.kruskal()  # on réalise la transformation de Kruskal
+    s = kruskal(g)  # on réalise la transformation de Kruskal
     with open(route, "r") as file:
         n = int(file.readline().split()[0])
         start = time.time()
@@ -334,8 +336,8 @@ def dfs(graph, start, profondeur,fathers,visited=None,index=0): #nous réalisons
 
 #Nous réalisons une étape de pré-processing afin d'améliorer considérablement la vitesse de nos algorithmes. Nous récupérons dans celui-ci : 
 # la profondeur de chaque noeud, et le père de chaque noeud.
-g = graph_from_file()
-s = g.kruskal()
+g = graph_from_file() #valeur du network à notifier dans les parenthèses pour lancer le préprocessing
+s = kruskal(g)
 root=s.nodes[0]
 prof = {nodes: 0 for nodes in s.nodes}
 dads = {nodes: 0 for nodes in s.nodes}
