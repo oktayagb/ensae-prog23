@@ -152,8 +152,8 @@ class Graph:
                 src = fathers[src]
                 src_ligne = profondeur[src]
                 src_chemin.append(src)
-            src_chemin.pop()
-            return src_chemin + dest_chemin[::-1] # on concatène les deux chemins, afin d'avoir, de manière optimale, le (seul) chemin reliant nos deux noeuds.
+            #src_chemin.pop()
+            return src_chemin +[fathers[dest]]+ dest_chemin[::-1] # on concatène les deux chemins, afin d'avoir, de manière optimale, le (seul) chemin reliant nos deux noeuds.
         elif src_ligne > dest_ligne:
             while src_ligne > dest_ligne:
                 src = fathers[src]
@@ -166,8 +166,8 @@ class Graph:
                 src = fathers[src]
                 src_ligne = profondeur[src]
                 src_chemin.append(src)
-            src_chemin.pop()
-            return src_chemin + dest_chemin[::-1]
+            #src_chemin.pop()
+            return src_chemin +[fathers[dest]]+ dest_chemin[::-1]
         else:
             if fathers[dest]==fathers[src]:
                 return [src,fathers[src], dest]
@@ -178,8 +178,8 @@ class Graph:
                 src = fathers[src]
                 src_ligne = profondeur[src]
                 src_chemin.append(src)
-            src_chemin.pop()
-            return src_chemin + dest_chemin[::-1]
+            #src_chemin.pop()
+            return src_chemin +[fathers[dest]]+ dest_chemin[::-1]
 
     def min_power_chemin(self, chemin):  # minimum de puissance nécessaire pour pouvoir faire un trajet donnée
         puissance = 0 #comme nous travaillons sur un arbre, le chemin est unique, donc il suffit juste de parcourir chaque arête de notre chemin,
