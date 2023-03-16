@@ -131,7 +131,7 @@ class Graph:
 # La complexité est de 0((nb_nodes+nb_egdes)*ln(nb_edges))
 
 
-
+#########(remarque du prof)on met trop de vas particulier pas besoin de pre_process et pas besoin de faire le egal et elif return fin_path(dest,src)
     def find_path(self, src, dest,pre_process): #on réalise cette fonction afin d'optimiser le temps de recherche d'un chemin dans un arbre connexe.
         root=pre_process[0] #on appelle notre pré-processing 
         src_chemin=[src]
@@ -215,7 +215,7 @@ def graph_from_file(filename):
                 raise Exception("Format incorrect")
     return g
 
-
+####créer une classe union find (remarque du prof) et pas definir de fonction dans une fonction
  def kruskal(graph):
         edges = graph.edges
         edges.sort(key=lambda x: x[2])  # on trie les chemins par ordre croissant de puissance
@@ -247,7 +247,7 @@ def graph_from_file(filename):
         return tree #on rajoute les arêtes si elles n'ont pas le même parent. Dans ce cas on les relie dans la structure union.
 
 
-
+#####(remarque du prof)trop de copier coller changer ca
 #liste des network, des routes.in et routes.out
 network1 = "/Users/input/network.1.in"
 network2 = "/Users/input/network.2.in"
@@ -355,7 +355,7 @@ prof = {nodes: 0 for nodes in s.nodes}
 dads = {nodes: 0 for nodes in s.nodes}
 dads[root] = root
 profondeur, fathers = dfs(s.graph,root,prof,dads)
-pre_process=(root,profondeur,fathers,prof,dads)
+pre_process=(root,profondeur,fathers,prof,dads)#(remarque du prof)pas besoin de faire ca
 #Lorsque vous souhaitez utiliser une fonction qui nécessite le pré-process, il ne faut pas oublier de donner la même valeur du network dans cette
 # fonction et à la ligne 337.
 
