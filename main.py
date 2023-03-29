@@ -370,3 +370,48 @@ pre_process=(root,profondeur,fathers,prof,dads)
 # Par conséquent, pour couvrir le trajet t dans G, nous pouvons simplement utiliser la même puissance que celle requise pour couvrir le trajet t' dans A. Comme t' est un sous-chemin de A, la puissance minimale requise pour couvrir t' dans A est la même que celle requise pour couvrir t dans A. Ainsi, la puissance minimale requise pour couvrir t dans G est la même que celle requise pour couvrir t dans A.
 # En conclusion, si le trajet t est entièrement contenu dans l'arbre couvrant de poids minimal A, alors la puissance minimale requise pour couvrir le trajet t dans le graphe G est égale à la puissance minimale requise pour couvrir le même trajet t dans l'arbre couvrant de poids minimal A.​
 
+trucks1="/Users/adrien/Desktop/ENSAE/M1/Cours ENSAE S1/Info/projetS2/input/trucks.0.in"
+
+def pre_proc(route_out,route_in,truck,B):
+    list_puissance=[]
+    list_dest=[]
+    modele=[]
+    voyage=[]
+    with open(route_in,'r') as file:
+        n = int(file.readline().split()[0])
+        for i in range(n):
+            edge = list(map(float, file.readline().split()))
+            dep, arr, utilite = int(edge[0]),int(edge[1]),edge[2]
+            list_dest.append((dep,arr,utilite))
+    with open(route_out, "r") as file2:
+        for i in range(1,n+1):
+            puis= float(file2.readline().split()[0])
+            list_puissance.append(puis)
+    with open(truck, 'r') as file3:
+        nb_modele = int(file3.readline().split()[0])
+        for i in range(nb_modele):
+            val = list(map(float, file3.readline().split()))
+            puis_cam,cout_cam = val[0],val[1]
+            modele.append((puis_cam,cout_cam))
+    modele.sort(key=lambda x:x[1])
+    for i in range(len(list_puissance)):
+        voyage.append((list_dest[i][0],list_dest[i][1],list_dest[i][2],list_puissance[i]))
+    voyage.sort(key=lambda x:x[2],reverse=True)
+
+    camion_pour_trajet=[]
+    for trajet in voyage:
+        for camion in modele:
+            if trajet[3]<=camion[0]:
+                camion_pour_trajet.append((trajet,camion))
+                break #ou pass
+
+    N=len(camion_pour_trajet)
+    camion_pour_trajet.sort(key=lambda x:(x[0][2]/x[1][1]),reverse=True)
+    S=0
+    profit=0
+    for i in range(N):
+        if S<B:
+            S+=camion_pour_trajet[i][1][1]
+            profit+=camion_pour_trajet[i][0][2]
+
+
