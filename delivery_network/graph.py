@@ -1,3 +1,35 @@
+import heapq
+
+def get_path_with_power(G, s, t, power, d):
+    """
+    Retourne le plus court chemin admissible du sommet s au sommet t qui peut être parcouru avec la puissance power,
+    en utilisant l'algorithme de Dijkstra, au sens de la distance d.
+    """
+    n = len(G)
+    dist = [float('inf')]*n
+    dist[s] = 0
+    prev = [None]*n
+    pq = [(0, s, power)]
+
+    while pq:
+        (dij, u, p) = heapq.heappop(pq)
+
+        if u == t:
+            path = []
+            while t != s:
+                path.append(t)
+                t = prev[t]
+            path.append(s)
+            return list(reversed(path))
+
+        for v, w in G[u]:
+            if w <= p:
+                if dist[v] > dist[u] + d(u, v):
+                    dist[v] = dist[u] + d(u, v)
+                    prev[v] = u
+                    heapq.heappush(pq, (dist[v], v, p - w))
+
+    return None
 import numpy as np
 from queue import PriorityQueue
 import heapq
