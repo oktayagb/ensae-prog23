@@ -1,4 +1,4 @@
-iimport numpy as np
+import numpy as np
 from queue import PriorityQueue
 import heapq
 import random
@@ -6,6 +6,40 @@ import time
 from collections import deque
 import graphviz
 
+def pre_proc(route_out, route_in, truck, B):
+    list_puissance = []
+    list_dest = []
+    modele = []
+    voyage = []
+
+    # lire les données d'entrée
+    with open(route_in, 'r') as file:
+        n = int(file.readline().split()[0])
+        for i in range(n):
+            dep, arr, utilite = map(int, file.readline().split())
+            list_dest.append((dep, arr, utilite))
+    with open(route_out, 'r') as file:
+        list_puissance = list(map(float, file.readlines()))
+    with open(truck, 'r') as file:
+        modele = [tuple(map(float, line.split())) for line in file.readlines()[1:]]
+    
+    # trier les données
+    list_dest.sort(key=lambda x: x[2], reverse=True)
+    modele.sort(key=lambda x: x[1])
+
+    # filtrer les trajets et les camions
+    camion_pour_trajet = [(t, c) for t in list_dest for c in modele if t[2] > c[0]]
+    camion_pour_trajet = sorted(camion_pour_trajet, key=lambda x: x[0][2]/x[1][1], reverse=True)
+    
+    # calculer les affectations de camions aux trajets
+    S = 0
+    profit = 0
+    for trajet, camion in camion_pour_trajet:
+        if S + camion[1] <= B:
+            S += camion[1]
+            profit += trajet[2]
+    
+    return profit
 
 class Graph:
     def __init__(self, nodes=[]):
