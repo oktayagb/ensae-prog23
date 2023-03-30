@@ -486,7 +486,8 @@ pre_process=(root,profondeur,fathers,prof,dads)
 
 trucks1="/Users/adrien/Desktop/ENSAE/M1/Cours ENSAE S1/Info/projetS2/input/trucks.0.in"
 
-def pre_proc(route_out,route_in,truck,B):
+#1ere possibilité (force brute)
+def maximisation(route_out,route_in,truck,B):
     list_puissance=[]
     list_dest=[]
     modele=[]
@@ -517,15 +518,84 @@ def pre_proc(route_out,route_in,truck,B):
         for camion in modele:
             if trajet[3]<=camion[0]:
                 camion_pour_trajet.append((trajet,camion))
-                break #ou pass
+                break
 
     N=len(camion_pour_trajet)
     camion_pour_trajet.sort(key=lambda x:(x[0][2]/x[1][1]),reverse=True)
     S=0
     profit=0
+    dernier=0
     for i in range(N):
-        if S<B:
+        if S+camion_pour_trajet[i][1][1]<B:
             S+=camion_pour_trajet[i][1][1]
             profit+=camion_pour_trajet[i][0][2]
+            dernier+=1
+            #camion_pour_trajet[:dernier]
+    return (profit)
 
+
+
+#2eme possibilité (socal search)
+def pre_proc_local_search(route_out, route_in, truck, B, iterations=1000):
+    # Récupération des données (même chose que 1ere possibilité
+    list_dest = []
+    list_puissance = []
+    modele = []
+    with open(route_in, 'r') as file:
+        n = int(file.readline().split()[0])
+        for i in range(n):
+            edge = list(map(float, file.readline().split()))
+            dep, arr, utilite = int(edge[0]), int(edge[1]), edge[2]
+            list_dest.append((dep, arr, utilite))
+    with open(route_out, "r") as file2:
+        for i in range(1, n+1):
+            puis = float(file2.readline().split()[0])
+            list_puissance.append(puis)
+    with open(truck, 'r') as file3:
+        nb_modele = int(file3.readline().split()[0])
+        for i in range(nb_modele):
+            val = list(map(float, file3.readline().split()))
+            puis_cam, cout_cam = val[0], val[1]
+            modele.append((puis_cam, cout_cam))
+    modele.sort(key=lambda x: x[1])
+
+    # Initialisation des variables
+    camion_pour_trajet = []
+    for i in range(len(list_puissance)):
+        trajet = (list_dest[i][0], list_dest[i][1], list_dest[i][2], list_puissance[i])
+        camion_pour_trajet.append((trajet, None))
+    camion_pour_trajet.sort(key=lambda x: x[0][2], reverse=True)
+    best_solution = camion_pour_trajet
+    best_profit = 0
+
+    # Fonction d'évaluation d'une solution
+    def evaluate(solution):
+        S = 0
+        profit = 0
+        for i in range(len(solution)):
+            trajet, camion = solution[i]
+            if camion is not None:
+                S += camion[1]
+                profit += trajet[2]
+                if S > B:
+                    return float('-inf')
+        return profit
+
+    # Recherche locale
+    for _ in range(iterations):
+        # Choix aléatoire d'un trajet et d'un camion
+        i = random.randint(0, len(camion_pour_trajet)-1)
+        trajet, camion = camion_pour_trajet[i]
+        j = random.randint(0, len(modele)-1)
+        new_camion = modele[j]
+        # Evaluation de la solution avec le nouveau camion
+        camion_pour_trajet[i] = (trajet, new_camion)
+        profit = evaluate(camion_pour_trajet)
+        # Acceptation ou rejet de la nouvelle solution
+        if profit > best_profit:
+            best_solution = camion_pour_trajet.copy()
+            best_profit = profit
+        else:
+            camion_pour_trajet[i] = (trajet, camion)
+    return (best_profit)
 
