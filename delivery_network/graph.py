@@ -253,9 +253,9 @@ def kruskal(graph):
 
 
 #liste des network, des routes.in et routes.out
-network_files = [f"/Users/input/network.{i}.in" for i in range(1, 11)]
-route_files = [f"/Users/input/routes.{i}.in" for i in range(1, 11)]
-out_files = [f"/Users/input/routes.{i}.out" for i in range(1, 11)]
+network_files = [f"/network.{i}.in" for i in range(1, 11)]
+route_files = [f"/routes.{i}.in" for i in range(1, 11)]
+out_files = [f"/routes.{i}.out" for i in range(1, 11)]
 
 
 
@@ -324,7 +324,7 @@ def dfs(graph, start, profondeur,fathers,visited=None,index=0): #nous réalisons
 
 #Nous réalisons une étape de pré-processing afin d'améliorer considérablement la vitesse de nos algorithmes. Nous récupérons dans celui-ci : 
 # la profondeur de chaque noeud, et le père de chaque noeud.
-g = graph_from_file() #valeur du network à notifier dans les parenthèses pour lancer le préprocessing
+g = graph_from_file(network_files[5]) #valeur du network à notifier dans les parenthèses pour lancer le préprocessing
 s = kruskal(g)
 root=s.nodes[0]
 prof = {nodes: 0 for nodes in s.nodes}
@@ -458,3 +458,5 @@ def pre_proc_local_search(route_out, route_in, truck, B, iterations=1000):
         else:
             camion_pour_trajet[i] = (trajet, camion)
     return (best_profit)
+  
+question_15(route_files[5],network_files[5],out_files[5])
