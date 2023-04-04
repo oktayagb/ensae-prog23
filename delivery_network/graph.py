@@ -145,6 +145,8 @@ class Graph:
                 dest=fathers[dest]
                 dest_ligne=profondeur[dest]
                 dest_chemin.append(dest)
+            if dest==src:
+                return dest_chemin[::-1]
             while fathers[dest]!=fathers[src]:
                 dest = fathers[dest]
                 dest_ligne = profondeur[dest]
