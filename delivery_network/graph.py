@@ -215,27 +215,30 @@ def graph_from_file(filename):
                 raise Exception("Format incorrect")
     return g
 
+
+def find(node):
+    if parents[node] != node:
+        parents[node] = find(parents[node])
+    return parents[node]  # la fonction find est une fonction récursive qui permet de renvoyer le parent d'un noeud
+def union(x, y):
+    x_racine = find(x)
+    y_racine = find(y)
+    if x_racine != y_racine:
+        if rang[x_racine] < rang[y_racine]:
+            parents[x_racine] = y_racine
+        else:
+            parents[y_racine] = x_racine
+            if rang[x_racine] == rang[y_racine]:
+                rang[x_racine] = rang[x_racine] + 1 #la fonction union permet de lier les noeuds entre eux, l'utilisation de 'racine' 
+                # nous permet de gagner en efficacité
 ####créer une classe union find (remarque du prof) et pas definir de fonction dans une fonction
- def kruskal(graph):
+
+
+def kruskal(graph):
         edges = graph.edges
         edges.sort(key=lambda x: x[2])  # on trie les chemins par ordre croissant de puissance
         parents = {node: node for node in graph.nodes}  # on initialise les parents de chaque noeud.
         rang = {node: 0 for node in graph.nodes} #on itinialise le rang de chaque noeud
-        def find(node):
-            if parents[node] != node:
-                parents[node] = find(parents[node])
-            return parents[node]  # la fonction find est une fonction récursive qui permet de renvoyer le parent d'un noeud
-        def union(x, y):
-            x_racine = find(x)
-            y_racine = find(y)
-            if x_racine != y_racine:
-                if rang[x_racine] < rang[y_racine]:
-                    parents[x_racine] = y_racine
-                else:
-                    parents[y_racine] = x_racine
-                    if rang[x_racine] == rang[y_racine]:
-                        rang[x_racine] = rang[x_racine] + 1 #la fonction union permet de lier les noeuds entre eux, l'utilisation de 'racine' 
-                        # nous permet de gagner en efficacité
         index = 0
         tree = Graph(graph.nodes)  # on crée l'arbre que l'on va renvoyer.
         while tree.nb_edges != graph.nb_nodes - 1:
