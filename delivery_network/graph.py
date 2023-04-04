@@ -231,7 +231,6 @@ def union(x, y):
             if rang[x_racine] == rang[y_racine]:
                 rang[x_racine] = rang[x_racine] + 1 #la fonction union permet de lier les noeuds entre eux, l'utilisation de 'racine' 
                 # nous permet de gagner en efficacité
-####créer une classe union find (remarque du prof) et pas definir de fonction dans une fonction
 
 
 def kruskal(graph):
