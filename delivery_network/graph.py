@@ -252,40 +252,11 @@ def kruskal(graph):
         return tree #on rajoute les arêtes si elles n'ont pas le même parent. Dans ce cas on les relie dans la structure union.
 
 
-#####(remarque du prof)trop de copier coller changer ca
 #liste des network, des routes.in et routes.out
-network1 = "/Users/input/network.1.in"
-network2 = "/Users/input/network.2.in"
-network3 = "/Users/input/network.3.in"
-network4 = "/Users/input/network.4.in"
-network5 = "/Users/input/network.5.in"
-network6 = "/Users/input/network.6.in"
-network7 = "/Users/input/network.7.in"
-network8 = "/Users/input/network.8.in"
-network9 = "/Users/input/network.9.in"
-network10 = "/Users/input/network.10.in"
+network_files = [f"/Users/input/network.{i}.in" for i in range(1, 11)]
+route_files = [f"/Users/input/routes.{i}.in" for i in range(1, 11)]
+out_files = [f"/Users/input/routes.{i}.out" for i in range(1, 11)]
 
-route1 = "/Users/input/routes.1.in"
-route2 = "/Users/input/routes.2.in"
-route3 = "/Users/input/routes.3.in"
-route4 = "/Users/input/routes.4.in"
-route5 = "/Users/input/routes.5.in"
-route6 = "/Users/input/routes.6.in"
-route7 = "/Users/input/routes.7.in"
-route8 = "/Users/input/routes.8.in"
-route9 = "/Users/input/routes.9.in"
-route10 = "/Users/input/routes.10.in"
-
-out1 = "/Users/input/routes.1.out"
-out2 = "/Users/input/routes.2.out"
-out3 = "/Users/input/routes.3.out"
-out4 = "/Users/input/routes.4.out"
-out5 = "/Users/input/routes.5.out"
-out6 = "/Users/input/routes.6.out"
-out7 = "/Users/input/routes.7.out"
-out8 = "/Users/input/routes.8.out"
-out9 = "/Users/input/routes.9.out"
-out10 = "/Users/input/routes.10.out"
 
 
 def draw_graph(graphe,chemin):
