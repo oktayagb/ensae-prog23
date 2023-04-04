@@ -132,11 +132,9 @@ class Graph:
 
 
 #########(remarque du prof)on met trop de vas particulier pas besoin de pre_process et pas besoin de faire le egal et elif return fin_path(dest,src)
-    def find_path(self, src, dest,pre_process): #on réalise cette fonction afin d'optimiser le temps de recherche d'un chemin dans un arbre connexe.
-        root=pre_process[0] #on appelle notre pré-processing 
+    def find_path(self, src, dest,root,profondeur,fathers): #on réalise cette fonction afin d'optimiser le temps de recherche d'un chemin dans un arbre connexe.
         src_chemin=[src]
         dest_chemin=[dest]
-        profondeur, fathers = pre_process[1],pre_process[2]
         src_ligne=profondeur[src]
         dest_ligne=profondeur[dest]
         if src_ligne < dest_ligne: #on récupère la profondeur des deux noeuds dans l'arbre, et on remonte dans l'arbre jusqu'à trouver le premier 
@@ -160,6 +158,8 @@ class Graph:
                 src = fathers[src]
                 src_ligne = profondeur[src]
                 src_chemin.append(src)
+            if dest==src:
+                return src_chemin
             while fathers[dest] != fathers[src]:
                 dest = fathers[dest]
                 dest_ligne = profondeur[dest]
@@ -192,8 +192,8 @@ class Graph:
                     break  # on sort de la boucle sur les voisins dès qu'on a trouvé le bon voisin
         return puissance
 
-    def min_power_tree(self, src, dest, pre_process): # on renvoie notre chemin le plus court; ainsi que sa puissance.
-        chemin = self.find_path(src, dest, pre_process)
+    def min_power_tree(self, src, dest, root,profondeur,fathers): # on renvoie notre chemin le plus court; ainsi que sa puissance.
+        chemin = self.find_path(src, dest, root,profondeur,fathers)
         return chemin, self.min_power_chemin(chemin)
     # Pour les network.x.in on a qu'une seule composante connexe donc pas besoin d'utiliser les composantes connexes.
     # Comme le chemin est unique, on en determine un peu importe sa puissance et on determine le minimum de puissance nécessaire pour faire ce trajet
@@ -293,7 +293,7 @@ def question_15(route, network, out):  # on cherche à estimer le temps de calcu
         for i in range(n):
             edge = list(map(float, file.readline().split()))
             dep, arr, utilite = int(edge[0]),int(edge[1]),edge[2]
-            a = s.min_power_tree(dep, arr,pre_process)[1]  # on calcule la puissance minimale pour chaque trajet de routes.x.in
+            a = s.min_power_tree(dep, arr,root,profondeur,fathers)[1]  # on calcule la puissance minimale pour chaque trajet de routes.x.in
             fichier.write(str(a))
             fichier.write("\n")
         end = time.time()
@@ -321,14 +321,13 @@ def dfs(graph, start, profondeur,fathers,visited=None,index=0): #nous réalisons
 
 #Nous réalisons une étape de pré-processing afin d'améliorer considérablement la vitesse de nos algorithmes. Nous récupérons dans celui-ci : 
 # la profondeur de chaque noeud, et le père de chaque noeud.
-g = graph_from_file(network_files[5]) #valeur du network à notifier dans les parenthèses pour lancer le préprocessing
+g = graph_from_file(network_files[0]) #valeur du network à notifier dans les parenthèses pour lancer le préprocessing
 s = kruskal(g)
 root=s.nodes[0]
 prof = {nodes: 0 for nodes in s.nodes}
 dads = {nodes: 0 for nodes in s.nodes}
 dads[root] = root
 profondeur, fathers = dfs(s.graph,root,prof,dads)
-pre_process=(root,profondeur,fathers,prof,dads)#(remarque du prof)pas besoin de faire ca
 #Lorsque vous souhaitez utiliser une fonction qui nécessite le pré-process, il ne faut pas oublier de donner la même valeur du network dans cette
 # fonction et à la ligne 337.
 
@@ -392,3 +391,66 @@ def maximisation(route_out,route_in,truck,B):
 
 
 
+#2eme possibilité (socal search)
+def pre_proc_local_search(route_out, route_in, truck, B, iterations=1000):
+    # Récupération des données (même chose que 1ere possibilité
+    list_dest = []
+    list_puissance = []
+    modele = []
+    with open(route_in, 'r') as file:
+        n = int(file.readline().split()[0])
+        for i in range(n):
+            edge = list(map(float, file.readline().split()))
+            dep, arr, utilite = int(edge[0]), int(edge[1]), edge[2]
+            list_dest.append((dep, arr, utilite))
+    with open(route_out, "r") as file2:
+        for i in range(1, n+1):
+            puis = float(file2.readline().split()[0])
+            list_puissance.append(puis)
+    with open(truck, 'r') as file3:
+        nb_modele = int(file3.readline().split()[0])
+        for i in range(nb_modele):
+            val = list(map(float, file3.readline().split()))
+            puis_cam, cout_cam = val[0], val[1]
+            modele.append((puis_cam, cout_cam))
+    modele.sort(key=lambda x: x[1])
+
+    # Initialisation des variables
+    camion_pour_trajet = []
+    for i in range(len(list_puissance)):
+        trajet = (list_dest[i][0], list_dest[i][1], list_dest[i][2], list_puissance[i])
+        camion_pour_trajet.append((trajet, None))
+    camion_pour_trajet.sort(key=lambda x: x[0][2], reverse=True)
+    best_solution = camion_pour_trajet
+    best_profit = 0
+
+    # Fonction d'évaluation d'une solution
+    def evaluate(solution):
+        S = 0
+        profit = 0
+        for i in range(len(solution)):
+            trajet, camion = solution[i]
+            if camion is not None:
+                S += camion[1]
+                profit += trajet[2]
+                if S > B:
+                    return float('-inf')
+        return profit
+
+    # Recherche locale
+    for _ in range(iterations):
+        # Choix aléatoire d'un trajet et d'un camion
+        i = random.randint(0, len(camion_pour_trajet)-1)
+        trajet, camion = camion_pour_trajet[i]
+        j = random.randint(0, len(modele)-1)
+        new_camion = modele[j]
+        # Evaluation de la solution avec le nouveau camion
+        camion_pour_trajet[i] = (trajet, new_camion)
+        profit = evaluate(camion_pour_trajet)
+        # Acceptation ou rejet de la nouvelle solution
+        if profit > best_profit:
+            best_solution = camion_pour_trajet.copy()
+            best_profit = profit
+        else:
+            camion_pour_trajet[i] = (trajet, camion)
+    return (best_profit)
