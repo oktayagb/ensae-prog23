@@ -328,7 +328,7 @@ def question_15(index,profondeur,fathers,s):  # on cherche à estimer le temps d
         for i in range(n):
             edge = list(map(float, file.readline().split()))
             dep, arr, utilite = int(edge[0]),int(edge[1]),edge[2]
-            a = s.min_power_tree(dep, arr,root,profondeur,fathers)[1]  # on calcule la puissance minimale pour chaque trajet de routes.x.in
+            a = s.min_power_tree(dep, arr,profondeur,fathers)[1]  # on calcule la puissance minimale pour chaque trajet de routes.x.in
             fichier.write(str(a))
             fichier.write("\n")
         end = time.time()
