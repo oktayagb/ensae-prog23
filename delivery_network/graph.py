@@ -283,13 +283,11 @@ def question_10(route, network,N):  # on cherche à estimer grossièrement le te
 
 # Question 15
 
-def question_15(route, network, out,profondeur,fathers):  # on cherche à estimer le temps de calcul de plusieurs graphes après transformations par Kruskal
-    g = graph_from_file(network)
-    s = kruskal(g)  # on réalise la transformation de Kruskal
-    with open(route, "r") as file:
+def question_15(index,profondeur,fathers,s):  # on cherche à estimer le temps de calcul de plusieurs graphes après transformations par Kruskal
+    with open(route_files[index-1], "r") as file:
         n = int(file.readline().split()[0])
         start = time.time()
-        fichier = open(out, "a")  # on va stocker les valeurs dans un nouveau dossier route.x.out
+        fichier = open(out_files[index-1], "a")  # on va stocker les valeurs dans un nouveau dossier route.x.out
         for i in range(n):
             edge = list(map(float, file.readline().split()))
             dep, arr, utilite = int(edge[0]),int(edge[1]),edge[2]
@@ -331,7 +329,7 @@ def pre_process(index): #fonction pré-process
     profondeur, fathers = dfs(s.graph, root, prof, dads)
     return profondeur,fathers
 
-profondeur, fathers = pre_process() #-> manière d'appeler le pré-process
+profondeur, fathers,s = pre_process() #-> manière d'appeler le pré-process
 
 
 trucks_files = [f"/Users/adrien/Desktop/ENSAE/M1/Cours ENSAE S1/Info/projetS2/input/trucks.{i}.in" for i in range(0, 3)]
