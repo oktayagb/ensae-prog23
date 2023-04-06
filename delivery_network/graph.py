@@ -283,7 +283,7 @@ def question_10(route, network,N):  # on cherche à estimer grossièrement le te
 
 # Question 15
 
-def question_15(route, network, out):  # on cherche à estimer le temps de calcul de plusieurs graphes après transformations par Kruskal
+def question_15(route, network, out,profondeur,fathers):  # on cherche à estimer le temps de calcul de plusieurs graphes après transformations par Kruskal
     g = graph_from_file(network)
     s = kruskal(g)  # on réalise la transformation de Kruskal
     with open(route, "r") as file:
@@ -303,7 +303,7 @@ def question_15(route, network, out):  # on cherche à estimer le temps de calcu
 #On remarque que le temps a considérablement diminué, notre fonction crée et rempli notre dossier routes.x.out entre 1sec et 120sec.
 
 
-def dfs(graph, start, profondeur,fathers,visited=None,index=0): #nous réalisons un dfs de notre graphe afin de récupérer, pour chaque arête 
+def dfs(graph, start, prof,dads,visited=None,index=0): #nous réalisons un dfs de notre graphe afin de récupérer, pour chaque arête 
     # sa profondeur dans le graphe, et son père.
     if visited is None:
         visited = set()  # ensemble de sommets visités
@@ -311,9 +311,9 @@ def dfs(graph, start, profondeur,fathers,visited=None,index=0): #nous réalisons
     index+=1
     for neighbor in graph[start]:
             if neighbor[0] not in visited:  # parcourir les voisins non visités
-                profondeur[neighbor[0]] += index #on augmente la profondeur à chaque fois que l'on descend dans le graphe
-                fathers[neighbor[0]] = start #on récupère le père de chaque noeud
-                dfs(graph, neighbor[0], profondeur,fathers,visited,index)  # appel récursif pour visiter chaque voisin non visité
+                prof[neighbor[0]] += index #on augmente la profondeur à chaque fois que l'on descend dans le graphe
+                dads[neighbor[0]] = start #on récupère le père de chaque noeud
+                dfs(graph, neighbor[0], prof,dads,visited,index)  # appel récursif pour visiter chaque voisin non visité
             else:
                 pass
     return profondeur,fathers
