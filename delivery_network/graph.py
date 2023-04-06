@@ -323,7 +323,7 @@ def dfs(graph, start, prof,dads,visited=None,index=0): #nous réalisons un dfs d
 # la profondeur de chaque noeud, et le père de chaque noeud.
 def pre_process(index): #fonction pré-process
     g = graph_from_file(network_files[index-1])
-    s = g.kruskal()
+    s = kruskal(g)
     root = s.nodes[0]
     prof = {nodes: 0 for nodes in s.nodes}
     dads = {nodes: 0 for nodes in s.nodes}
