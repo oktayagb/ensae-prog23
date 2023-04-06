@@ -321,15 +321,18 @@ def dfs(graph, start, profondeur,fathers,visited=None,index=0): #nous réalisons
 
 #Nous réalisons une étape de pré-processing afin d'améliorer considérablement la vitesse de nos algorithmes. Nous récupérons dans celui-ci : 
 # la profondeur de chaque noeud, et le père de chaque noeud.
-g = graph_from_file(network_files[0]) #valeur du network à notifier dans les parenthèses pour lancer le préprocessing
-s = kruskal(g)
-root=s.nodes[0]
-prof = {nodes: 0 for nodes in s.nodes}
-dads = {nodes: 0 for nodes in s.nodes}
-dads[root] = root
-profondeur, fathers = dfs(s.graph,root,prof,dads)
-#Lorsque vous souhaitez utiliser une fonction qui nécessite le pré-process, il ne faut pas oublier de donner la même valeur du network dans cette
-# fonction et à la ligne 337.
+def pre_process(index): #fonction pré-process
+    g = graph_from_file(network_files[index-1])
+    s = g.kruskal()
+    root = s.nodes[0]
+    prof = {nodes: 0 for nodes in s.nodes}
+    dads = {nodes: 0 for nodes in s.nodes}
+    dads[root] = root
+    profondeur, fathers = dfs(s.graph, root, prof, dads)
+    return profondeur,fathers
+
+profondeur, fathers = pre_process() #-> manière d'appeler le pré-process
+
 
 
 def maximisation(route_out,route_in,truck,B):
