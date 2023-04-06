@@ -131,6 +131,47 @@ class Graph:
 # La complexité est de 0((nb_nodes+nb_egdes)*ln(nb_edges))
 
 
+
+    def find_all_paths(self, src, dest): #on cherche à obtenir une liste de listes qui contient tous les chemins possibles
+        # pour rejoindre src de dest
+        visited = set()
+        paths = []
+        current_path = [src]
+
+        def dfs(node): #on réalise un dfs pour cela
+            visited.add(node)
+            if node == dest:
+                paths.append(current_path.copy()) #si on est arrivé à la destination, on rajoute ce chemin à notre liste de chemins
+            else:
+                for neighbor in self.graph[node]:
+                    if neighbor[0] not in visited:
+                        current_path.append(neighbor[0]) #on rajoute le noeud au trajet
+                        dfs(neighbor[0]) #procédé récursif sur chaque noeud
+                        current_path.pop()
+            visited.remove(node)
+
+        dfs(src)
+        return paths
+
+    def min_dist_chemin(self,src,dest):
+        all_path = self.find_all_paths(src,dest)
+        min_d = np.inf
+        min_path = None
+        for path in all_path:
+            dist = 0
+            for k in range(len(path) - 1):
+                for (n, p, d) in self.graph[path[k]]:
+                    if n == path[k + 1]:
+                        dist += d
+                        if dist <= min_d:
+                            min_d = dist
+                            min_path = path
+        return min_path,min_d
+
+
+
+
+
 #########(remarque du prof)on met trop de vas particulier pas besoin de pre_process et pas besoin de faire le egal et elif return fin_path(dest,src)
     def find_path(self, src, dest,profondeur,fathers): #on réalise cette fonction afin d'optimiser le temps de recherche d'un chemin dans un arbre connexe.
         src_chemin=[src]
