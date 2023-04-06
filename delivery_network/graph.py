@@ -148,7 +148,7 @@ class Graph:
                         current_path.append(neighbor[0]) #on rajoute le noeud au trajet
                         dfs(neighbor[0]) #procédé récursif sur chaque noeud
                         current_path.pop()
-            visited.remove(node)
+                visited.remove(node)
 
         dfs(src)
         return paths
