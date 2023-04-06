@@ -132,7 +132,7 @@ class Graph:
 
 
 #########(remarque du prof)on met trop de vas particulier pas besoin de pre_process et pas besoin de faire le egal et elif return fin_path(dest,src)
-    def find_path(self, src, dest,root,profondeur,fathers): #on réalise cette fonction afin d'optimiser le temps de recherche d'un chemin dans un arbre connexe.
+    def find_path(self, src, dest,profondeur,fathers): #on réalise cette fonction afin d'optimiser le temps de recherche d'un chemin dans un arbre connexe.
         src_chemin=[src]
         dest_chemin=[dest]
         src_ligne=profondeur[src]
@@ -265,9 +265,9 @@ def draw_graph(graphe,chemin):
     return dot.render( format='png')
 
 
-def question_10(route, network,N):  # on cherche à estimer grossièrement le temps de calcul de plusieurs graphes. L'on remarque que ce temps est considérable.
-    g = graph_from_file(network)
-    with open(route, "r") as file:
+def question_10(index,N):  # on cherche à estimer grossièrement le temps de calcul de plusieurs graphes. L'on remarque que ce temps est considérable.
+    g = graph_from_file(network_files[index-1])
+    with open(route_files[index-1], "r") as file:
         n = int(file.readline().split()[0])
         start = time.time()
         for i in range(N):
@@ -314,7 +314,7 @@ def dfs(graph, start, prof,dads,visited=None,index=0): #nous réalisons un dfs d
                 dfs(graph, neighbor[0], prof,dads,visited,index)  # appel récursif pour visiter chaque voisin non visité
             else:
                 pass
-    return profondeur,fathers
+    return prof,dads
 
 
 #Nous réalisons une étape de pré-processing afin d'améliorer considérablement la vitesse de nos algorithmes. Nous récupérons dans celui-ci : 
@@ -327,7 +327,7 @@ def pre_process(index): #fonction pré-process
     dads = {nodes: 0 for nodes in s.nodes}
     dads[root] = root
     profondeur, fathers = dfs(s.graph, root, prof, dads)
-    return profondeur,fathers
+    return profondeur,fathers,s
 
 profondeur, fathers,s = pre_process() #-> manière d'appeler le pré-process
 
