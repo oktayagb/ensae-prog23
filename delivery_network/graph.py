@@ -83,7 +83,7 @@ class Graph:
                     visited.add(neighbor)  # on le marque comme visité
                     queue.append((neighbor, path + [neighbor]))  # on rajoute à la pile ce noeud et on actualise le parcours en rajoutant le noeud
         return None  # on renvoie None seulement si après avoir tout parcouru on ne trouve pas de chemin de puissance minimal, ou que les éléments sont dans 2 compo connexes
-    # La complexité est en O(nb_edges)
+    # La complexité est en O(nb_edges + nb_nodes)
 
     
     
@@ -170,9 +170,6 @@ class Graph:
 
 
 
-
-
-#########(remarque du prof)on met trop de vas particulier pas besoin de pre_process et pas besoin de faire le egal et elif return fin_path(dest,src)
     def find_path(self, src, dest,profondeur,fathers): #on réalise cette fonction afin d'optimiser le temps de recherche d'un chemin dans un arbre connexe.
         src_chemin=[src]
         dest_chemin=[dest]
@@ -254,7 +251,6 @@ def graph_from_file(filename):
             else:
                 raise Exception("Format incorrect")
     return g
-
 
 
 
