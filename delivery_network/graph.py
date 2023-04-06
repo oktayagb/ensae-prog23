@@ -332,17 +332,6 @@ profondeur, fathers = dfs(s.graph,root,prof,dads)
 # fonction et à la ligne 337.
 
 
-##################################################################################################################################################
-#Question 11 :
-# Soit G un graphe non-pondéré et non-dirigé, et soit A un arbre couvrant de poids minimal de G.
-# Supposons que le trajet t dans G relie les sommets u et v. Si t est contenu dans A, alors le trajet t dans A relie également les sommets u et v.
-# Supposons maintenant que t contient une arête qui n'est pas dans A. Nous allons montrer que cela ne peut pas arriver en utilisant l'hypothèse que A est un arbre couvrant de poids minimal.
-# Soit e une arête de t qui n'est pas dans A. Comme A est un arbre couvrant, il y a un unique chemin dans A reliant u et v. Supposons que ce chemin soit u -> w -> v, où w est un sommet intermédiaire sur le chemin.
-# Nous pouvons maintenant remplacer l'arête e dans t par le chemin u -> w -> v dans A. Le résultat est un nouveau trajet t' qui relie u et v et qui est contenu dans A. De plus, le poids total de t' dans A est inférieur ou égal au poids total de t dans G, car A est un arbre couvrant de poids minimal.
-# Par conséquent, pour couvrir le trajet t dans G, nous pouvons simplement utiliser la même puissance que celle requise pour couvrir le trajet t' dans A. Comme t' est un sous-chemin de A, la puissance minimale requise pour couvrir t' dans A est la même que celle requise pour couvrir t dans A. Ainsi, la puissance minimale requise pour couvrir t dans G est la même que celle requise pour couvrir t dans A.
-# En conclusion, si le trajet t est entièrement contenu dans l'arbre couvrant de poids minimal A, alors la puissance minimale requise pour couvrir le trajet t dans le graphe G est égale à la puissance minimale requise pour couvrir le même trajet t dans l'arbre couvrant de poids minimal A.​
-
-#1ere possibilité (force brute)
 def maximisation(route_out,route_in,truck,B):
     list_puissance=[]
     list_dest=[]
@@ -363,31 +352,31 @@ def maximisation(route_out,route_in,truck,B):
         for i in range(nb_modele):
             val = list(map(float, file3.readline().split()))
             puis_cam,cout_cam = val[0],val[1]
-            modele.append((puis_cam,cout_cam))
-    modele.sort(key=lambda x:x[1])
+            modele.append((puis_cam,cout_cam,i)) 
+    modele.sort(key=lambda x:x[1]) #on récupère une liste de tous les modèles de camions (indexé par un entier), triée par ordre croissante de coût
     for i in range(len(list_puissance)):
-        voyage.append((list_dest[i][0],list_dest[i][1],list_dest[i][2],list_puissance[i]))
-    voyage.sort(key=lambda x:x[2],reverse=True)
+        voyage.append((list_dest[i][0],list_dest[i][1],list_dest[i][2],list_puissance[i]))  #on recupère une liste avec tous les trajets ainsi que leur utilité et
+        #la puissance nécessaire pour faire le trajet
 
     camion_pour_trajet=[]
     for trajet in voyage:
         for camion in modele:
             if trajet[3]<=camion[0]:
-                camion_pour_trajet.append((trajet,camion))
-                break
+                camion_pour_trajet.append((trajet,camion)) #On associe à chaque trajet le camion le moins cher qui peut réaliser le trajet
+                break #on sort de la boucle for lorsque l'on a trouvé le camion le moins cher
 
     N=len(camion_pour_trajet)
-    camion_pour_trajet.sort(key=lambda x:(x[0][2]/x[1][1]),reverse=True)
+    camion_pour_trajet.sort(key=lambda x:(x[0][2]/x[1][1]),reverse=True) #on trie la nouvelle liste par efficacité (utilité du trajet / prix du camion optimal)
+    # décroissante
     S=0
     profit=0
     dernier=0
     for i in range(N):
-        if S+camion_pour_trajet[i][1][1]<B:
+        if S+camion_pour_trajet[i][1][1]<B: #tant que la contrainte n'est pas saturée, on prend les trajets
             S+=camion_pour_trajet[i][1][1]
             profit+=camion_pour_trajet[i][0][2]
             dernier+=1
-            #camion_pour_trajet[:dernier]
-    return (profit)
+    return (camion_pour_trajet[:dernier],profit,B-S) #on renvoie la collection de camions et trajets choisis, ainsi que le profit et le budget restant
 
 
 
