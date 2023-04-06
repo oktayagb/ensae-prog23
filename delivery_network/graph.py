@@ -472,7 +472,7 @@ n=int(np.log(prof_max)/np.log(2))
 for j in range(n):
     for i in range(1,len(ancestor)+1):
         ancestor[i].append(ancestor[ancestor[i][j]][j])
-
+#ancestor est la liste des ancêtres à la distance 2^i et puissance regroupe les puissances minimales pour aller d'un noeud a son ancetre a la distance 2^i
 puissance={i: [] for i in range(1,s.nb_nodes+1) }
 
 for i in range(n+1):
@@ -497,8 +497,18 @@ def min_power_seance3(start, end, depth, ancestor, power):
             start = ancestor[start][i]
             end = ancestor[end][i]
     return max(min_power, power[start][0], power[end][0])       
-       
-        
-        
+#complexité de O(ln(nb_edges)) car on a quasiment le même algorithme qu'à la séance 2 mais on remplace le parcours de toute les aretes du chemin par une recherche dichotomique.
+#D'où la complexité en O(ln(nb_edges
+####Test theorique pour estimer un temps theorique pour le temps de calcul des routes.out avec l'amélioration de la seance 3: pour route 2 on obtient un temps théorique de  1.5618s.  
+#Ce qui est plus court que ce que nous avons fait à la séance 2 mais le pre_process est plus long. On obtient les mêmes conclusions pour les autres routes.
+#start = time.time()
+#for i in range(10000):
+    #dep, arr = random.randint(1,100000),random.randint(1,100000)
+    #min_power3(dep, arr,profondeur,ancestor,puissance)  # on calcule la puissance minimale pour chaque trajet de routes.x.in
+#end = time.time()
+#elapsed = end - start
+#total = (elapsed / 1000)*100000
+#print(f' Temps total : {total:.5}s')  # on renvoie le temps total
+
         
         
