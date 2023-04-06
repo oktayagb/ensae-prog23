@@ -461,3 +461,19 @@ def draw_allocations_rouge_bleu(graphe,liste_chemin): #forme de liste_chemin=[(c
         dot.edge(str(u), str(v))
 
     return dot.render( format='png')
+#####################################################################################################################################
+
+ancestor={i: [] for i in range(1,s.nb_nodes+1) }
+for i in range(1,s.nb_nodes+1):
+    ancestor[i].append(fathers[i])
+prof_max=max(profondeur.values())
+n=int(np.log(prof_max)/np.log(2))
+for j in range(n):
+    for i in range(1,len(ancestor)+1):
+        ancestor[i].append(ancestor[ancestor[i][j]][j])
+
+puissance={i: [] for i in range(1,s.nb_nodes+1) }
+
+for i in range(n+1):
+    for j in range(1,len(ancestor)+1):
+        puissance[j].append(s.min_power_tree(j,ancestor[j][i],1,profondeur,fathers)[1])
