@@ -230,8 +230,8 @@ class Graph:
                     break  # on sort de la boucle sur les voisins dès qu'on a trouvé le bon voisin
         return puissance
 
-    def min_power_tree(self, src, dest, root,profondeur,fathers): # on renvoie notre chemin le plus court; ainsi que sa puissance.
-        chemin = self.find_path(src, dest, root,profondeur,fathers)
+    def min_power_tree(self, src, dest,profondeur,fathers): # on renvoie notre chemin le plus court; ainsi que sa puissance.
+        chemin = self.find_path(src, dest,profondeur,fathers)
         return chemin, self.min_power_chemin(chemin)
     # Pour les network.x.in on a qu'une seule composante connexe donc pas besoin d'utiliser les composantes connexes.
     # Comme le chemin est unique, on en determine un peu importe sa puissance et on determine le minimum de puissance nécessaire pour faire ce trajet
@@ -463,6 +463,7 @@ def draw_allocations_rouge_bleu(graphe,liste_chemin): #forme de liste_chemin=[(c
     return dot.render( format='png')
 #####################################################################################################################################
 
+##Séance 3
 ancestor={i: [] for i in range(1,s.nb_nodes+1) }
 for i in range(1,s.nb_nodes+1):
     ancestor[i].append(fathers[i])
@@ -476,7 +477,7 @@ puissance={i: [] for i in range(1,s.nb_nodes+1) }
 
 for i in range(n+1):
     for j in range(1,len(ancestor)+1):
-        puissance[j].append(s.min_power_tree(j,ancestor[j][i],1,profondeur,fathers)[1])
+        puissance[j].append(s.min_power_tree(j,ancestor[j][i],profondeur,fathers)[1])
 
 def min_power_seance3(start, end, depth, ancestor, power):
     if depth[start] < depth[end]:
