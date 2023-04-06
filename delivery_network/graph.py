@@ -368,24 +368,7 @@ def pre_process(index): #fonction pré-process
 
 profondeur, fathers,s = pre_process() #-> manière d'appeler le pré-process
 
-def min_power_seance3(start, end, depth, ancestor, power):
-    if depth[start] < depth[end]:
-        start, end = end, start
-    diff = depth[start] - depth[end]
-    min_power = 0
-    while diff:
-        i = diff.bit_length() -1
-        min_power = max(min_power, power[start][i])
-        start = ancestor[start][i]
-        diff -= 2 ** i
-    if start == end:
-        return min_power
-    for i in range(len(ancestor[start])-1, -1, -1):
-        if ancestor[start][i] != ancestor[end][i]:
-            min_power = max(min_power, power[start][i], power[end][i])
-            start = ancestor[start][i]
-            end = ancestor[end][i]
-    return max(min_power, power[start][0], power[end][0])
+
 trucks_files = [f"/Users/adrien/Desktop/ENSAE/M1/Cours ENSAE S1/Info/projetS2/input/trucks.{i}.in" for i in range(0, 3)]
 opti_files = [f"/Users/adrien/Desktop/ENSAE/M1/Cours ENSAE S1/Info/projetS2/input/trucks.{i}.out" for i in range(1, 11)]
 
@@ -494,3 +477,27 @@ puissance={i: [] for i in range(1,s.nb_nodes+1) }
 for i in range(n+1):
     for j in range(1,len(ancestor)+1):
         puissance[j].append(s.min_power_tree(j,ancestor[j][i],1,profondeur,fathers)[1])
+
+def min_power_seance3(start, end, depth, ancestor, power):
+    if depth[start] < depth[end]:
+        start, end = end, start
+    diff = depth[start] - depth[end]
+    min_power = 0
+    while diff:
+        i = diff.bit_length() -1
+        min_power = max(min_power, power[start][i])
+        start = ancestor[start][i]
+        diff -= 2 ** i
+    if start == end:
+        return min_power
+    for i in range(len(ancestor[start])-1, -1, -1):
+        if ancestor[start][i] != ancestor[end][i]:
+            min_power = max(min_power, power[start][i], power[end][i])
+            start = ancestor[start][i]
+            end = ancestor[end][i]
+    return max(min_power, power[start][0], power[end][0])       
+       
+        
+        
+        
+        
