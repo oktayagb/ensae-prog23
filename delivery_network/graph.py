@@ -404,4 +404,25 @@ def visualisation(index_route,index_truck_out,index_truck_in,B): #permet de pré
 
 budget = 25*10**9
 
+def draw_allocations(graphe,liste_chemin): #forme de liste_chemin=[(chemin,allocation)]
+    dot = graphviz.Graph() #on crée un graphique à l'aide de la bibliothèque graphviz
+    for chemin in liste_chemin:
+        for u, v in zip(chemin[0], chemin[0][1:]):
+            dot.edge(str(u), str(v), color='red',label=str(chemin[1])) # on ajoute les arêtes que l'on souhaite colorier pour les mettre en évidence.
+    for u, v,w in graphe.edges:
+        dot.edge(str(u), str(v))
 
+    return dot.render( format='png')
+
+
+def draw_allocations_rouge_bleu(graphe,liste_chemin): #forme de liste_chemin=[(chemin,allocation)]
+    dot = graphviz.Graph() #on crée un graphique à l'aide de la bibliothèque graphviz
+
+    for u, v in zip(liste_chemin[0][0], liste_chemin[0][0][1:]):
+        dot.edge(str(u), str(v), color='red',label=str(liste_chemin[0][1])) # on ajoute les arêtes que l'on souhaite colorier pour les mettre en évidence.
+    for u, v in zip(liste_chemin[1][0], liste_chemin[1][0][1:]):
+        dot.edge(str(u), str(v), color='blue',label=str(liste_chemin[1][1])) # on ajoute les arêtes que l'on souhaite colorier pour les mettre en évidence.
+    for u, v,w in graphe.edges:
+        dot.edge(str(u), str(v))
+
+    return dot.render( format='png')
