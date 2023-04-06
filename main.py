@@ -6,6 +6,7 @@ import time
 from collections import deque
 import graphviz
 
+
 class Graph:
     def __init__(self, nodes=[]):
         self.nodes = nodes
@@ -130,12 +131,10 @@ class Graph:
 # La complexité est de 0((nb_nodes+nb_egdes)*ln(nb_edges))
 
 
-
-    def find_path(self, src, dest,pre_process): #on réalise cette fonction afin d'optimiser le temps de recherche d'un chemin dans un arbre connexe.
-        root=pre_process[0] #on appelle notre pré-processing 
+#########(remarque du prof)on met trop de vas particulier pas besoin de pre_process et pas besoin de faire le egal et elif return fin_path(dest,src)
+    def find_path(self, src, dest,profondeur,fathers): #on réalise cette fonction afin d'optimiser le temps de recherche d'un chemin dans un arbre connexe.
         src_chemin=[src]
         dest_chemin=[dest]
-        profondeur, fathers = pre_process[1],pre_process[2]
         src_ligne=profondeur[src]
         dest_ligne=profondeur[dest]
         if src_ligne < dest_ligne: #on récupère la profondeur des deux noeuds dans l'arbre, et on remonte dans l'arbre jusqu'à trouver le premier 
@@ -144,6 +143,8 @@ class Graph:
                 dest=fathers[dest]
                 dest_ligne=profondeur[dest]
                 dest_chemin.append(dest)
+            if dest==src:
+                return dest_chemin[::-1]
             while fathers[dest]!=fathers[src]:
                 dest = fathers[dest]
                 dest_ligne = profondeur[dest]
@@ -151,13 +152,14 @@ class Graph:
                 src = fathers[src]
                 src_ligne = profondeur[src]
                 src_chemin.append(src)
-            src_chemin.pop()
-            return src_chemin + dest_chemin[::-1] # on concatène les deux chemins, afin d'avoir, de manière optimale, le (seul) chemin reliant nos deux noeuds.
+            return src_chemin +[fathers[dest]]+ dest_chemin[::-1] # on concatène les deux chemins, afin d'avoir, de manière optimale, le (seul) chemin reliant nos deux noeuds.
         elif src_ligne > dest_ligne:
             while src_ligne > dest_ligne:
                 src = fathers[src]
                 src_ligne = profondeur[src]
                 src_chemin.append(src)
+            if dest==src:
+                return src_chemin
             while fathers[dest] != fathers[src]:
                 dest = fathers[dest]
                 dest_ligne = profondeur[dest]
@@ -165,8 +167,7 @@ class Graph:
                 src = fathers[src]
                 src_ligne = profondeur[src]
                 src_chemin.append(src)
-            src_chemin.pop()
-            return src_chemin + dest_chemin[::-1]
+            return src_chemin +[fathers[dest]]+ dest_chemin[::-1]
         else:
             if fathers[dest]==fathers[src]:
                 return [src,fathers[src], dest]
@@ -177,8 +178,7 @@ class Graph:
                 src = fathers[src]
                 src_ligne = profondeur[src]
                 src_chemin.append(src)
-            src_chemin.pop()
-            return src_chemin + dest_chemin[::-1]
+            return src_chemin +[fathers[dest]]+ dest_chemin[::-1]
 
     def min_power_chemin(self, chemin):  # minimum de puissance nécessaire pour pouvoir faire un trajet donnée
         puissance = 0 #comme nous travaillons sur un arbre, le chemin est unique, donc il suffit juste de parcourir chaque arête de notre chemin,
@@ -192,8 +192,8 @@ class Graph:
                     break  # on sort de la boucle sur les voisins dès qu'on a trouvé le bon voisin
         return puissance
 
-    def min_power_tree(self, src, dest, pre_process): # on renvoie notre chemin le plus court; ainsi que sa puissance.
-        chemin = self.find_path(src, dest, pre_process)
+    def min_power_tree(self, src, dest, root,profondeur,fathers): # on renvoie notre chemin le plus court; ainsi que sa puissance.
+        chemin = self.find_path(src, dest, root,profondeur,fathers)
         return chemin, self.min_power_chemin(chemin)
     # Pour les network.x.in on a qu'une seule composante connexe donc pas besoin d'utiliser les composantes connexes.
     # Comme le chemin est unique, on en determine un peu importe sa puissance et on determine le minimum de puissance nécessaire pour faire ce trajet
@@ -213,6 +213,10 @@ def graph_from_file(filename):
             else:
                 raise Exception("Format incorrect")
     return g
+
+
+
+
 
 def kruskal(graph):
         edges = graph.edges
@@ -245,40 +249,11 @@ def kruskal(graph):
         return tree #on rajoute les arêtes si elles n'ont pas le même parent. Dans ce cas on les relie dans la structure union.
 
 
-
 #liste des network, des routes.in et routes.out
-network1 = "/Users/input/network.1.in"
-network2 = "/Users/input/network.2.in"
-network3 = "/Users/input/network.3.in"
-network4 = "/Users/input/network.4.in"
-network5 = "/Users/input/network.5.in"
-network6 = "/Users/input/network.6.in"
-network7 = "/Users/input/network.7.in"
-network8 = "/Users/input/network.8.in"
-network9 = "/Users/input/network.9.in"
-network10 = "/Users/input/network.10.in"
+network_files = [f"/network.{i}.in" for i in range(1, 11)]
+route_files = [f"/routes.{i}.in" for i in range(1, 11)]
+out_files = [f"/routes.{i}.out" for i in range(1, 11)]
 
-route1 = "/Users/input/routes.1.in"
-route2 = "/Users/input/routes.2.in"
-route3 = "/Users/input/routes.3.in"
-route4 = "/Users/input/routes.4.in"
-route5 = "/Users/input/routes.5.in"
-route6 = "/Users/input/routes.6.in"
-route7 = "/Users/input/routes.7.in"
-route8 = "/Users/input/routes.8.in"
-route9 = "/Users/input/routes.9.in"
-route10 = "/Users/input/routes.10.in"
-
-out1 = "/Users/input/routes.1.out"
-out2 = "/Users/input/routes.2.out"
-out3 = "/Users/input/routes.3.out"
-out4 = "/Users/input/routes.4.out"
-out5 = "/Users/input/routes.5.out"
-out6 = "/Users/input/routes.6.out"
-out7 = "/Users/input/routes.7.out"
-out8 = "/Users/input/routes.8.out"
-out9 = "/Users/input/routes.9.out"
-out10 = "/Users/input/routes.10.out"
 
 
 def draw_graph(graphe,chemin):
@@ -290,9 +265,9 @@ def draw_graph(graphe,chemin):
     return dot.render( format='png')
 
 
-def question_10(route, network,N):  # on cherche à estimer grossièrement le temps de calcul de plusieurs graphes. L'on remarque que ce temps est considérable.
-    g = graph_from_file(network)
-    with open(route, "r") as file:
+def question_10(index,N):  # on cherche à estimer grossièrement le temps de calcul de plusieurs graphes. L'on remarque que ce temps est considérable.
+    g = graph_from_file(network_files[index-1])
+    with open(route_files[index-1], "r") as file:
         n = int(file.readline().split()[0])
         start = time.time()
         for i in range(N):
@@ -308,17 +283,15 @@ def question_10(route, network,N):  # on cherche à estimer grossièrement le te
 
 # Question 15
 
-def question_15(route, network, out):  # on cherche à estimer le temps de calcul de plusieurs graphes après transformations par Kruskal
-    g = graph_from_file(network)
-    s = kruskal(g)  # on réalise la transformation de Kruskal
-    with open(route, "r") as file:
+def question_15(index,profondeur,fathers,s):  # on cherche à estimer le temps de calcul de plusieurs graphes après transformations par Kruskal
+    with open(route_files[index-1], "r") as file:
         n = int(file.readline().split()[0])
         start = time.time()
-        fichier = open(out, "a")  # on va stocker les valeurs dans un nouveau dossier route.x.out
+        fichier = open(out_files[index-1], "a")  # on va stocker les valeurs dans un nouveau dossier route.x.out
         for i in range(n):
             edge = list(map(float, file.readline().split()))
             dep, arr, utilite = int(edge[0]),int(edge[1]),edge[2]
-            a = s.min_power_tree(dep, arr,pre_process)[1]  # on calcule la puissance minimale pour chaque trajet de routes.x.in
+            a = s.min_power_tree(dep, arr,root,profondeur,fathers)[1]  # on calcule la puissance minimale pour chaque trajet de routes.x.in
             fichier.write(str(a))
             fichier.write("\n")
         end = time.time()
@@ -328,7 +301,7 @@ def question_15(route, network, out):  # on cherche à estimer le temps de calcu
 #On remarque que le temps a considérablement diminué, notre fonction crée et rempli notre dossier routes.x.out entre 1sec et 120sec.
 
 
-def dfs(graph, start, profondeur,fathers,visited=None,index=0): #nous réalisons un dfs de notre graphe afin de récupérer, pour chaque arête 
+def dfs(graph, start, prof,dads,visited=None,index=0): #nous réalisons un dfs de notre graphe afin de récupérer, pour chaque arête 
     # sa profondeur dans le graphe, et son père.
     if visited is None:
         visited = set()  # ensemble de sommets visités
@@ -336,150 +309,118 @@ def dfs(graph, start, profondeur,fathers,visited=None,index=0): #nous réalisons
     index+=1
     for neighbor in graph[start]:
             if neighbor[0] not in visited:  # parcourir les voisins non visités
-                profondeur[neighbor[0]] += index #on augmente la profondeur à chaque fois que l'on descend dans le graphe
-                fathers[neighbor[0]] = start #on récupère le père de chaque noeud
-                dfs(graph, neighbor[0], profondeur,fathers,visited,index)  # appel récursif pour visiter chaque voisin non visité
+                prof[neighbor[0]] += index #on augmente la profondeur à chaque fois que l'on descend dans le graphe
+                dads[neighbor[0]] = start #on récupère le père de chaque noeud
+                dfs(graph, neighbor[0], prof,dads,visited,index)  # appel récursif pour visiter chaque voisin non visité
             else:
                 pass
-    return profondeur,fathers
+    return prof,dads
 
 
 #Nous réalisons une étape de pré-processing afin d'améliorer considérablement la vitesse de nos algorithmes. Nous récupérons dans celui-ci : 
 # la profondeur de chaque noeud, et le père de chaque noeud.
-g = graph_from_file() #valeur du network à notifier dans les parenthèses pour lancer le préprocessing
-s = kruskal(g)
-root=s.nodes[0]
-prof = {nodes: 0 for nodes in s.nodes}
-dads = {nodes: 0 for nodes in s.nodes}
-dads[root] = root
-profondeur, fathers = dfs(s.graph,root,prof,dads)
-pre_process=(root,profondeur,fathers,prof,dads)
-#Lorsque vous souhaitez utiliser une fonction qui nécessite le pré-process, il ne faut pas oublier de donner la même valeur du network dans cette
-# fonction et à la ligne 337.
+def pre_process(index): #fonction pré-process
+    g = graph_from_file(network_files[index-1])
+    s = kruskal(g)
+    root = s.nodes[0]
+    prof = {nodes: 0 for nodes in s.nodes}
+    dads = {nodes: 0 for nodes in s.nodes}
+    dads[root] = root
+    profondeur, fathers = dfs(s.graph, root, prof, dads)
+    return profondeur,fathers,s
+
+profondeur, fathers,s = pre_process() #-> manière d'appeler le pré-process
 
 
-##################################################################################################################################################
-#Question 11 :
-# Soit G un graphe non-pondéré et non-dirigé, et soit A un arbre couvrant de poids minimal de G.
-# Supposons que le trajet t dans G relie les sommets u et v. Si t est contenu dans A, alors le trajet t dans A relie également les sommets u et v.
-# Supposons maintenant que t contient une arête qui n'est pas dans A. Nous allons montrer que cela ne peut pas arriver en utilisant l'hypothèse que A est un arbre couvrant de poids minimal.
-# Soit e une arête de t qui n'est pas dans A. Comme A est un arbre couvrant, il y a un unique chemin dans A reliant u et v. Supposons que ce chemin soit u -> w -> v, où w est un sommet intermédiaire sur le chemin.
-# Nous pouvons maintenant remplacer l'arête e dans t par le chemin u -> w -> v dans A. Le résultat est un nouveau trajet t' qui relie u et v et qui est contenu dans A. De plus, le poids total de t' dans A est inférieur ou égal au poids total de t dans G, car A est un arbre couvrant de poids minimal.
-# Par conséquent, pour couvrir le trajet t dans G, nous pouvons simplement utiliser la même puissance que celle requise pour couvrir le trajet t' dans A. Comme t' est un sous-chemin de A, la puissance minimale requise pour couvrir t' dans A est la même que celle requise pour couvrir t dans A. Ainsi, la puissance minimale requise pour couvrir t dans G est la même que celle requise pour couvrir t dans A.
-# En conclusion, si le trajet t est entièrement contenu dans l'arbre couvrant de poids minimal A, alors la puissance minimale requise pour couvrir le trajet t dans le graphe G est égale à la puissance minimale requise pour couvrir le même trajet t dans l'arbre couvrant de poids minimal A.​
+trucks_files = [f"/Users/adrien/Desktop/ENSAE/M1/Cours ENSAE S1/Info/projetS2/input/trucks.{i}.in" for i in range(0, 3)]
+opti_files = [f"/Users/adrien/Desktop/ENSAE/M1/Cours ENSAE S1/Info/projetS2/input/trucks.{i}.out" for i in range(1, 11)]
 
-trucks1="/Users/adrien/Desktop/ENSAE/M1/Cours ENSAE S1/Info/projetS2/input/trucks.0.in"
 
 #1ere possibilité (force brute)
-def maximisation(route_out,route_in,truck,B):
+def maximisation(index_route,index_truck,B):
     list_puissance=[]
     list_dest=[]
     modele=[]
     voyage=[]
-    with open(route_in,'r') as file:
+    with open(route_files[index_route-1],'r') as file:
         n = int(file.readline().split()[0])
         for i in range(n):
             edge = list(map(float, file.readline().split()))
             dep, arr, utilite = int(edge[0]),int(edge[1]),edge[2]
             list_dest.append((dep,arr,utilite))
-    with open(route_out, "r") as file2:
+    with open(out_files[index_route-1], "r") as file2:
         for i in range(1,n+1):
             puis= float(file2.readline().split()[0])
             list_puissance.append(puis)
-    with open(truck, 'r') as file3:
+    with open(trucks_files[index_truck-1], 'r') as file3:
         nb_modele = int(file3.readline().split()[0])
         for i in range(nb_modele):
             val = list(map(float, file3.readline().split()))
             puis_cam,cout_cam = val[0],val[1]
-            modele.append((puis_cam,cout_cam))
-    modele.sort(key=lambda x:x[1])
+            modele.append((puis_cam,cout_cam,i))
+    modele.sort(key=lambda x:x[1]) #on récupère une liste de tous les modèles de camions (indexé par un entier), triée par ordre croissante de coût
     for i in range(len(list_puissance)):
-        voyage.append((list_dest[i][0],list_dest[i][1],list_dest[i][2],list_puissance[i]))
-    voyage.sort(key=lambda x:x[2],reverse=True)
+        voyage.append((list_dest[i][0],list_dest[i][1],list_dest[i][2],list_puissance[i]))  #on recupère une liste avec tous les trajets ainsi que leur utilité et
+        #la puissance nécessaire pour faire le trajet
 
     camion_pour_trajet=[]
     for trajet in voyage:
         for camion in modele:
             if trajet[3]<=camion[0]:
-                camion_pour_trajet.append((trajet,camion))
-                break
+                camion_pour_trajet.append((trajet,camion)) #On associe à chaque trajet le camion le moins cher qui peut réaliser le trajet
+                break #on sort de la boucle for lorsque l'on a trouvé le camion le moins cher
 
     N=len(camion_pour_trajet)
-    camion_pour_trajet.sort(key=lambda x:(x[0][2]/x[1][1]),reverse=True)
+    camion_pour_trajet.sort(key=lambda x:(x[0][2]/x[1][1]),reverse=True) #on trie la nouvelle liste par efficacité (utilité du trajet / prix du camion optimal)
+    # décroissante
     S=0
     profit=0
     dernier=0
     for i in range(N):
-        if S+camion_pour_trajet[i][1][1]<B:
+        if S+camion_pour_trajet[i][1][1]<B: #tant que la contrainte n'est pas saturée, on prend les trajets
             S+=camion_pour_trajet[i][1][1]
             profit+=camion_pour_trajet[i][0][2]
             dernier+=1
-            #camion_pour_trajet[:dernier]
-    return (profit)
+    return (camion_pour_trajet[:dernier],profit,B-S) #on renvoie la collection de camions et trajets choisis, ainsi que le profit et le budget restant
 
 
+def visualisation(index_route,index_truck_out,index_truck_in,B): #permet de présenter dans un fichier les résultats de la fonction maximisation
+    dep_arr_cam=[]
+    camion_pour_trajet, profit, reste = maximisation(index_route,index_truck_in,B)
+    fichier = open(opti_files[index_truck_out-1], "a")  # on va stocker les valeurs dans un nouveau dossier route.x.out
+    fichier.write(str((profit,reste)))
+    fichier.write("\n")
+    fichier.write("profit, budget restant")
+    fichier.write("\n")
+    fichier.write("départ, arrivée, numéro du camion")
+    fichier.write("\n")
+    for i in range(len(camion_pour_trajet)):
+        dep_arr_cam.append((camion_pour_trajet[i][0][0],camion_pour_trajet[i][0][1],camion_pour_trajet[i][1][2]))
+        fichier.write(str(dep_arr_cam[i]))
+        fichier.write("\n")
+    fichier.close()
 
-#2eme possibilité (socal search)
-def pre_proc_local_search(route_out, route_in, truck, B, iterations=1000):
-    # Récupération des données (même chose que 1ere possibilité
-    list_dest = []
-    list_puissance = []
-    modele = []
-    with open(route_in, 'r') as file:
-        n = int(file.readline().split()[0])
-        for i in range(n):
-            edge = list(map(float, file.readline().split()))
-            dep, arr, utilite = int(edge[0]), int(edge[1]), edge[2]
-            list_dest.append((dep, arr, utilite))
-    with open(route_out, "r") as file2:
-        for i in range(1, n+1):
-            puis = float(file2.readline().split()[0])
-            list_puissance.append(puis)
-    with open(truck, 'r') as file3:
-        nb_modele = int(file3.readline().split()[0])
-        for i in range(nb_modele):
-            val = list(map(float, file3.readline().split()))
-            puis_cam, cout_cam = val[0], val[1]
-            modele.append((puis_cam, cout_cam))
-    modele.sort(key=lambda x: x[1])
+budget = 25*10**9
 
-    # Initialisation des variables
-    camion_pour_trajet = []
-    for i in range(len(list_puissance)):
-        trajet = (list_dest[i][0], list_dest[i][1], list_dest[i][2], list_puissance[i])
-        camion_pour_trajet.append((trajet, None))
-    camion_pour_trajet.sort(key=lambda x: x[0][2], reverse=True)
-    best_solution = camion_pour_trajet
-    best_profit = 0
+def draw_allocations(graphe,liste_chemin): #forme de liste_chemin=[(chemin,allocation)]
+    dot = graphviz.Graph() #on crée un graphique à l'aide de la bibliothèque graphviz
+    for chemin in liste_chemin:
+        for u, v in zip(chemin[0], chemin[0][1:]):
+            dot.edge(str(u), str(v), color='red',label=str(chemin[1])) # on ajoute les arêtes que l'on souhaite colorier pour les mettre en évidence.
+    for u, v,w in graphe.edges:
+        dot.edge(str(u), str(v))
 
-    # Fonction d'évaluation d'une solution
-    def evaluate(solution):
-        S = 0
-        profit = 0
-        for i in range(len(solution)):
-            trajet, camion = solution[i]
-            if camion is not None:
-                S += camion[1]
-                profit += trajet[2]
-                if S > B:
-                    return float('-inf')
-        return profit
+    return dot.render( format='png')
 
-    # Recherche locale
-    for _ in range(iterations):
-        # Choix aléatoire d'un trajet et d'un camion
-        i = random.randint(0, len(camion_pour_trajet)-1)
-        trajet, camion = camion_pour_trajet[i]
-        j = random.randint(0, len(modele)-1)
-        new_camion = modele[j]
-        # Evaluation de la solution avec le nouveau camion
-        camion_pour_trajet[i] = (trajet, new_camion)
-        profit = evaluate(camion_pour_trajet)
-        # Acceptation ou rejet de la nouvelle solution
-        if profit > best_profit:
-            best_solution = camion_pour_trajet.copy()
-            best_profit = profit
-        else:
-            camion_pour_trajet[i] = (trajet, camion)
-    return (best_profit)
 
+def draw_allocations_rouge_bleu(graphe,liste_chemin): #forme de liste_chemin=[(chemin,allocation)]
+    dot = graphviz.Graph() #on crée un graphique à l'aide de la bibliothèque graphviz
+
+    for u, v in zip(liste_chemin[0][0], liste_chemin[0][0][1:]):
+        dot.edge(str(u), str(v), color='red',label=str(liste_chemin[0][1])) # on ajoute les arêtes que l'on souhaite colorier pour les mettre en évidence.
+    for u, v in zip(liste_chemin[1][0], liste_chemin[1][0][1:]):
+        dot.edge(str(u), str(v), color='blue',label=str(liste_chemin[1][1])) # on ajoute les arêtes que l'on souhaite colorier pour les mettre en évidence.
+    for u, v,w in graphe.edges:
+        dot.edge(str(u), str(v))
+
+    return dot.render( format='png')
