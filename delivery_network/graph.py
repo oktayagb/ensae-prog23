@@ -334,28 +334,32 @@ def pre_process(index): #fonction pré-process
 profondeur, fathers = pre_process() #-> manière d'appeler le pré-process
 
 
+trucks_files = [f"/Users/adrien/Desktop/ENSAE/M1/Cours ENSAE S1/Info/projetS2/input/trucks.{i}.in" for i in range(0, 3)]
+opti_files = [f"/Users/adrien/Desktop/ENSAE/M1/Cours ENSAE S1/Info/projetS2/input/trucks.{i}.out" for i in range(1, 11)]
 
-def maximisation(route_out,route_in,truck,B):
+
+#1ere possibilité (force brute)
+def maximisation(index_route,index_truck,B):
     list_puissance=[]
     list_dest=[]
     modele=[]
     voyage=[]
-    with open(route_in,'r') as file:
+    with open(route_files[index_route-1],'r') as file:
         n = int(file.readline().split()[0])
         for i in range(n):
             edge = list(map(float, file.readline().split()))
             dep, arr, utilite = int(edge[0]),int(edge[1]),edge[2]
             list_dest.append((dep,arr,utilite))
-    with open(route_out, "r") as file2:
+    with open(out_files[index_route-1], "r") as file2:
         for i in range(1,n+1):
             puis= float(file2.readline().split()[0])
             list_puissance.append(puis)
-    with open(truck, 'r') as file3:
+    with open(trucks_files[index_truck-1], 'r') as file3:
         nb_modele = int(file3.readline().split()[0])
         for i in range(nb_modele):
             val = list(map(float, file3.readline().split()))
             puis_cam,cout_cam = val[0],val[1]
-            modele.append((puis_cam,cout_cam,i)) 
+            modele.append((puis_cam,cout_cam,i))
     modele.sort(key=lambda x:x[1]) #on récupère une liste de tous les modèles de camions (indexé par un entier), triée par ordre croissante de coût
     for i in range(len(list_puissance)):
         voyage.append((list_dest[i][0],list_dest[i][1],list_dest[i][2],list_puissance[i]))  #on recupère une liste avec tous les trajets ainsi que leur utilité et
@@ -381,5 +385,23 @@ def maximisation(route_out,route_in,truck,B):
             dernier+=1
     return (camion_pour_trajet[:dernier],profit,B-S) #on renvoie la collection de camions et trajets choisis, ainsi que le profit et le budget restant
 
+
+def visualisation(index_route,index_truck_out,index_truck_in,B): #permet de présenter dans un fichier les résultats de la fonction maximisation
+    dep_arr_cam=[]
+    camion_pour_trajet, profit, reste = maximisation(index_route,index_truck_in,B)
+    fichier = open(opti_files[index_truck_out-1], "a")  # on va stocker les valeurs dans un nouveau dossier route.x.out
+    fichier.write(str((profit,reste)))
+    fichier.write("\n")
+    fichier.write("profit, budget restant")
+    fichier.write("\n")
+    fichier.write("départ, arrivée, numéro du camion")
+    fichier.write("\n")
+    for i in range(len(camion_pour_trajet)):
+        dep_arr_cam.append((camion_pour_trajet[i][0][0],camion_pour_trajet[i][0][1],camion_pour_trajet[i][1][2]))
+        fichier.write(str(dep_arr_cam[i]))
+        fichier.write("\n")
+    fichier.close()
+
+budget = 25*10**9
 
 
